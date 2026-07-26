@@ -1,5 +1,6 @@
 'use client'
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -31,6 +32,7 @@ export function Navbar() {
 
   // Close mobile menu on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOpen(false);
   }, [pathname]);
 
@@ -42,13 +44,8 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex h-20 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold tracking-tight text-primary dark:text-white">
-              SPYNN
-            </span>
-            <span className="hidden text-xs font-medium text-accent sm:inline-block">
-              STUDIO
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.jpg" alt="SPYNN Logo" width={160} height={48} className="h-12 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}

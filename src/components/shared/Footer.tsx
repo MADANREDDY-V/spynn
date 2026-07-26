@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
@@ -10,13 +11,8 @@ export function Footer() {
           
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold tracking-tight text-primary dark:text-white">
-                SPYNN
-              </span>
-              <span className="text-xs font-medium text-accent">
-                STUDIO
-              </span>
+            <Link href="/" className="flex items-center">
+              <Image src="/logo.jpg" alt="SPYNN Logo" width={160} height={48} className="h-12 w-auto object-contain" />
             </Link>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               {siteConfig.description}
