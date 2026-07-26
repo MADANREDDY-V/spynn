@@ -1,0 +1,98 @@
+[
+  {
+    "id": "m-shirt-dryclean",
+    "garmentName": "Men's Shirt",
+    "category": "Dry Cleaning",
+    "price": 79,
+    "estimatedTime": "48 Hours",
+    "notes": "Premium solvent cleaning"
+  },
+  {
+    "id": "m-trouser-dryclean",
+    "garmentName": "Men's Trousers",
+    "category": "Dry Cleaning",
+    "price": 89,
+    "estimatedTime": "48 Hours",
+    "notes": "Crisp crease finishing"
+  },
+  {
+    "id": "m-suit-2pc-dryclean",
+    "garmentName": "2-Piece Suit",
+    "category": "Dry Cleaning",
+    "price": 349,
+    "estimatedTime": "72 Hours",
+    "notes": "Delicate fabric care"
+  },
+  {
+    "id": "w-saree-dryclean",
+    "garmentName": "Silk Saree",
+    "category": "Dry Cleaning",
+    "price": 299,
+    "estimatedTime": "72 Hours",
+    "notes": "Roll press included"
+  },
+  {
+    "id": "w-lehenga-dryclean",
+    "garmentName": "Heavy Lehenga",
+    "category": "Dry Cleaning",
+    "price": 799,
+    "estimatedTime": "4-5 Days",
+    "notes": "Embroidery protection"
+  },
+  {
+    "id": "h-curtain-dryclean",
+    "garmentName": "Curtain (Window)",
+    "category": "Curtain Cleaning",
+    "price": 199,
+    "estimatedTime": "72 Hours",
+    "notes": "Per panel"
+  },
+  {
+    "id": "h-blanket-double",
+    "garmentName": "Double Blanket / Quilt",
+    "category": "Blanket Cleaning",
+    "price": 399,
+    "estimatedTime": "72 Hours",
+    "notes": "Anti-bacterial wash"
+  },
+  {
+    "id": "m-shirt-steam",
+    "garmentName": "Men's Shirt",
+    "category": "Steam Ironing",
+    "price": 29,
+    "estimatedTime": "24 Hours",
+    "notes": ""
+  },
+  {
+    "id": "m-trouser-steam",
+    "garmentName": "Men's Trousers",
+    "category": "Steam Ironing",
+    "price": 29,
+    "estimatedTime": "24 Hours",
+    "notes": ""
+  },
+  {
+    "id": "h-sofa-5seater",
+    "garmentName": "5 Seater Sofa",
+    "category": "Sofa Cleaning",
+    "price": 1499,
+    "estimatedTime": "Same Day (At Home)",
+    "notes": "Deep shampoo cleaning"
+  },
+  {
+    "id": "h-carpet-med",
+    "garmentName": "Carpet (Medium)",
+    "category": "Carpet Cleaning",
+    "price": 599,
+    "estimatedTime": "72 Hours",
+    "notes": "Intensive dust & stain removal"
+  },
+  {
+    "id": "s-sneakers",
+    "garmentName": "Sneakers",
+    "category": "Shoe Cleaning",
+    "price": 349,
+    "estimatedTime": "72 Hours",
+    "notes": "Inside-out deep clean"
+  }
+]
