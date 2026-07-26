@@ -1,98 +1,1890 @@
 [
   {
-    "id": "m-shirt-dryclean",
-    "garmentName": "Men's Shirt",
-    "category": "Dry Cleaning",
-    "price": 79,
-    "estimatedTime": "48 Hours",
-    "notes": "Premium solvent cleaning"
-  },
-  {
-    "id": "m-trouser-dryclean",
-    "garmentName": "Men's Trousers",
-    "category": "Dry Cleaning",
-    "price": 89,
-    "estimatedTime": "48 Hours",
-    "notes": "Crisp crease finishing"
-  },
-  {
-    "id": "m-suit-2pc-dryclean",
-    "garmentName": "2-Piece Suit",
-    "category": "Dry Cleaning",
-    "price": 349,
-    "estimatedTime": "72 Hours",
-    "notes": "Delicate fabric care"
-  },
-  {
-    "id": "w-saree-dryclean",
-    "garmentName": "Silk Saree",
-    "category": "Dry Cleaning",
-    "price": 299,
-    "estimatedTime": "72 Hours",
-    "notes": "Roll press included"
-  },
-  {
-    "id": "w-lehenga-dryclean",
-    "garmentName": "Heavy Lehenga",
-    "category": "Dry Cleaning",
-    "price": 799,
-    "estimatedTime": "4-5 Days",
-    "notes": "Embroidery protection"
-  },
-  {
-    "id": "h-curtain-dryclean",
-    "garmentName": "Curtain (Window)",
-    "category": "Curtain Cleaning",
-    "price": 199,
-    "estimatedTime": "72 Hours",
-    "notes": "Per panel"
-  },
-  {
-    "id": "h-blanket-double",
-    "garmentName": "Double Blanket / Quilt",
-    "category": "Blanket Cleaning",
-    "price": 399,
-    "estimatedTime": "72 Hours",
-    "notes": "Anti-bacterial wash"
-  },
-  {
-    "id": "m-shirt-steam",
-    "garmentName": "Men's Shirt",
-    "category": "Steam Ironing",
-    "price": 29,
-    "estimatedTime": "24 Hours",
+    "id": "item-1",
+    "garmentName": "Kids regular Wear (Below 10 years)",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
     "notes": ""
   },
   {
-    "id": "m-trouser-steam",
-    "garmentName": "Men's Trousers",
-    "category": "Steam Ironing",
-    "price": 29,
-    "estimatedTime": "24 Hours",
+    "id": "item-2",
+    "garmentName": "Kids Designer Wear (Below 10 years)",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-3",
+    "garmentName": "T-Shirt/ Shirt",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
     "notes": ""
   },
   {
-    "id": "h-sofa-5seater",
-    "garmentName": "5 Seater Sofa",
-    "category": "Sofa Cleaning",
-    "price": 1499,
-    "estimatedTime": "Same Day (At Home)",
-    "notes": "Deep shampoo cleaning"
+    "id": "item-4",
+    "garmentName": "Silk Shirt",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
   },
   {
-    "id": "h-carpet-med",
-    "garmentName": "Carpet (Medium)",
-    "category": "Carpet Cleaning",
-    "price": 599,
-    "estimatedTime": "72 Hours",
-    "notes": "Intensive dust & stain removal"
+    "id": "item-5",
+    "garmentName": "Safari Suit",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
   },
   {
-    "id": "s-sneakers",
-    "garmentName": "Sneakers",
-    "category": "Shoe Cleaning",
-    "price": 349,
-    "estimatedTime": "72 Hours",
-    "notes": "Inside-out deep clean"
+    "id": "item-6",
+    "garmentName": "Blazer",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-7",
+    "garmentName": "Safari Suit Coat",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-8",
+    "garmentName": "Waist Coat",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 130,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-9",
+    "garmentName": "Achkan",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-10",
+    "garmentName": "Top Plain",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-11",
+    "garmentName": "Top Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 130,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-12",
+    "garmentName": "Top Very Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-13",
+    "garmentName": "Kurta Kameez",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-14",
+    "garmentName": "Kurta Kameez Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 180,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-15",
+    "garmentName": "Kurta Kameez Very Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-16",
+    "garmentName": "Dupatta Plain",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-17",
+    "garmentName": "Dupatta Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 110,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-18",
+    "garmentName": "Dupatta Very Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 140,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-19",
+    "garmentName": "Blouse Plain",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-20",
+    "garmentName": "Blouse Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-21",
+    "garmentName": "Blouse Very Heavy",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-22",
+    "garmentName": "Sameez",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-23",
+    "garmentName": "Vest",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-24",
+    "garmentName": "Bra",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-25",
+    "garmentName": "Swimming Costume",
+    "category": "DRY CLEANING - UPPER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-26",
+    "garmentName": "Pant/ Trousers or Jeans",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-27",
+    "garmentName": "Lungi or Dhoti",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-28",
+    "garmentName": "Track Pant",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-29",
+    "garmentName": "Pajama/ Lower/ Leggings/ Slacks",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-30",
+    "garmentName": "Short/ Capri",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-31",
+    "garmentName": "Jumper",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-32",
+    "garmentName": "Salwar Plain",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-33",
+    "garmentName": "Salwar Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 130,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-34",
+    "garmentName": "Salwar Very Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 180,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-35",
+    "garmentName": "Palazo Plain",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-36",
+    "garmentName": "Palazo Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 130,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-37",
+    "garmentName": "Palazo Very Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-38",
+    "garmentName": "Short Skirt Plain",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 60,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-39",
+    "garmentName": "Short Skirt Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-40",
+    "garmentName": "Short Skirt Very Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-41",
+    "garmentName": "Long Skirt Plain",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 140,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-42",
+    "garmentName": "Long Skirt Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-43",
+    "garmentName": "Long Skirt Very Heavy",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-44",
+    "garmentName": "Petti Coat",
+    "category": "DRY CLEANING - BOTTOM WEAR",
+    "price": 70,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-45",
+    "garmentName": "Ladies Suit 1 Pcs",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-46",
+    "garmentName": "Ladies Suit 2 Pcs",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-47",
+    "garmentName": "Gents Suit 1 Pcs",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-48",
+    "garmentName": "Gents Suit 2 Pcs",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-49",
+    "garmentName": "Safari Suit 1 Pcs",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-50",
+    "garmentName": "Sherwani 1 Pcs Light",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-51",
+    "garmentName": "Sherwani 1 Pcs Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-52",
+    "garmentName": "Groom Sherwani (Weight upto 2.5Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 800,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-53",
+    "garmentName": "Groom Sherwani (Weight upto 5Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 1200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-54",
+    "garmentName": "Groom Sherwani (Weight upto 10Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 1800,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-55",
+    "garmentName": "Saree Plain",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-56",
+    "garmentName": "Saree Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 175,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-57",
+    "garmentName": "Saree Very Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-58",
+    "garmentName": "Bridal Saree (Weight upto 2.5Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 1000,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-59",
+    "garmentName": "Bridal Saree (Weight upto 5Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 2000,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-60",
+    "garmentName": "Bridal Saree (Weight upto 10Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 3000,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-61",
+    "garmentName": "Lehenga 1 Pc Plain",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-62",
+    "garmentName": "Lehenga 1 Pc Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-63",
+    "garmentName": "Lehenga 2 Pcs Plain",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-64",
+    "garmentName": "Lehenga 2 Pcs Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 450,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-65",
+    "garmentName": "Lehenga 3 Pcs Plain",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 400,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-66",
+    "garmentName": "Lehenga 3 Pcs Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 600,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-67",
+    "garmentName": "Bridal Lehenga (Weight upto 2.5Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 1200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-68",
+    "garmentName": "Bridal Lehenga (Weight upto 5Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 2000,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-69",
+    "garmentName": "Bridal Lehenga (Weight upto 10Kgs)",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 3000,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-70",
+    "garmentName": "Gown Plain",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-71",
+    "garmentName": "Gown Heavy",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 400,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-72",
+    "garmentName": "Gown Bridal",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 800,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-73",
+    "garmentName": "Dungaree",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-74",
+    "garmentName": "Sharara",
+    "category": "DRY CLEANING - FULL BODY",
+    "price": 225,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-75",
+    "garmentName": "Woolen Shirt",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 130,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-76",
+    "garmentName": "Woolen Pant",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 140,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-77",
+    "garmentName": "Sweatshirt without Hood",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-78",
+    "garmentName": "Sweatshirt with Hood",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 180,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-79",
+    "garmentName": "Coat - Normal",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-80",
+    "garmentName": "Coat - (Fur Fluffy)",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-81",
+    "garmentName": "Long Coat - Normal",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-82",
+    "garmentName": "Long Coat - (Fur Fluffy)",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-83",
+    "garmentName": "Jacket Half Sleeves",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-84",
+    "garmentName": "Jacket Full Sleeves",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-85",
+    "garmentName": "Jacket with Hood",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 230,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-86",
+    "garmentName": "Sweater/ Cardigan Half Sleeves Plain",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 90,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-87",
+    "garmentName": "Sweater/ Cardigan Half Sleeves Heavy",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 130,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-88",
+    "garmentName": "Sweater/ Cardigan Full Sleeves Plain",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-89",
+    "garmentName": "Sweater/ Cardigan Full Sleeves Heavy",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-90",
+    "garmentName": "Scarf",
+    "category": "DRY CLEANING - WINTER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-91",
+    "garmentName": "Bedsheet - Single",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-92",
+    "garmentName": "Bedsheet - Double",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-93",
+    "garmentName": "Quilt Cover - Single",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-94",
+    "garmentName": "Quilt Cover - Double",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 160,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-95",
+    "garmentName": "Bed Spread/ Summer Comforter - Single",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-96",
+    "garmentName": "Bed Spread/ Summer Comforter - Double",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-97",
+    "garmentName": "Sofa/ Cushion/ Pillow Cover - Small",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-98",
+    "garmentName": "Sofa/ Cushion/ Pillow Cover - Medium",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-99",
+    "garmentName": "Sofa/ Cushion/ Pillow Cover - Large",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-100",
+    "garmentName": "Blanket Single - Single Layer",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-101",
+    "garmentName": "Blanket Single - Double Layer",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 190,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-102",
+    "garmentName": "Quilt Double - Single Layer",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-103",
+    "garmentName": "Quilt Double - Double Layer",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-104",
+    "garmentName": "Cushion Pillow - Small",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-105",
+    "garmentName": "Cushion Pillow - Medium",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 160,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-106",
+    "garmentName": "Cushion Pillow - Large",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-107",
+    "garmentName": "Towel - Large",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-108",
+    "garmentName": "Footmat - small",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-109",
+    "garmentName": "Curtain Belt",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-110",
+    "garmentName": "Hand Towel",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-111",
+    "garmentName": "Tablecloth - Small",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 70,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-112",
+    "garmentName": "Tablecloth - Large",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-113",
+    "garmentName": "Table Mat",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-114",
+    "garmentName": "Curtain Door without Liner Panel per sft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 8,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-115",
+    "garmentName": "Curtain Door with Liner Panel per sft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 10,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-116",
+    "garmentName": "Curtain Window without Liner Panel per sft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 8,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-117",
+    "garmentName": "Curtain Window with Liner Panel per sft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 10,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-118",
+    "garmentName": "Blinds per Sq. ft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-119",
+    "garmentName": "Carpet - Normal Sq. ft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-120",
+    "garmentName": "Carpet - (Fur/ Puffy) Sq. ft",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-121",
+    "garmentName": "Soft Toys (Uto 12 inch)",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-122",
+    "garmentName": "Soft Toys (Uto 24 inch)",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-123",
+    "garmentName": "Soft Toys (Uto 36 inch)",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 400,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-124",
+    "garmentName": "Soft Toys (More than 36 inch)",
+    "category": "DRY CLEANING - HOUSEHOLD",
+    "price": 750,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-125",
+    "garmentName": "Sports Shoe Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 300,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-126",
+    "garmentName": "Canvas Shoes Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 320,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-127",
+    "garmentName": "Suede/Sneaker Shoes Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-128",
+    "garmentName": "Leather Shoes Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 400,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-129",
+    "garmentName": "Ankle Length Boots Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 500,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-130",
+    "garmentName": "Mid Length Boots Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 600,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-131",
+    "garmentName": "Knee Length Boots Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 750,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-132",
+    "garmentName": "Sandel Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-133",
+    "garmentName": "Slippers Pair",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-134",
+    "garmentName": "Bag Pack Small",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-135",
+    "garmentName": "Mountaineers Bag Pack",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 220,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-136",
+    "garmentName": "Handbag Canvas Jute/ Cloth small",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-137",
+    "garmentName": "Handbag Canvas Jute/ Cloth Large",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-138",
+    "garmentName": "Leather Handbag Small",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 400,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-139",
+    "garmentName": "Leather Handbag Large",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 800,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-140",
+    "garmentName": "Trolley Bag (Uto 24 Inches)",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-141",
+    "garmentName": "Trolley Bag (Uto 36 Inches)",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-142",
+    "garmentName": "Trolley Bag (Uto 48 Inches)",
+    "category": "DRY CLEANING - SHOE & BAG CARE",
+    "price": 500,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-143",
+    "garmentName": "Kids (Below 10 Years)",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 12,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-144",
+    "garmentName": "Full Shirt",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-145",
+    "garmentName": "Designer wear Shirt",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 25,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-146",
+    "garmentName": "T-Shirt/ Half Shirt",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-147",
+    "garmentName": "Silk Shirt",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 18,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-148",
+    "garmentName": "Safari Suit",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-149",
+    "garmentName": "Blazer",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-150",
+    "garmentName": "Safari Suit Coat",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-151",
+    "garmentName": "Waist Coat",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 25,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-152",
+    "garmentName": "Achkan",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-153",
+    "garmentName": "Top Plain",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-154",
+    "garmentName": "Top Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-155",
+    "garmentName": "Top Very Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-156",
+    "garmentName": "Kurta Kameez",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 18,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-157",
+    "garmentName": "Kurta Kameez Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-158",
+    "garmentName": "Kurta Kameez Very Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-159",
+    "garmentName": "Dupatta Plain",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 12,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-160",
+    "garmentName": "Dupatta Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-161",
+    "garmentName": "Dupatta Very Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-162",
+    "garmentName": "Blouse",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 10,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-163",
+    "garmentName": "Blouse Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 12,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-164",
+    "garmentName": "Blouse Very Heavy",
+    "category": "STEAM IRONING - UPPER WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-165",
+    "garmentName": "Pant/ Trousers or Jeans",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-166",
+    "garmentName": "Lungi or Dhoti",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-167",
+    "garmentName": "Track Pant",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-168",
+    "garmentName": "Pajama/ Lower/ Leggings/ Slacks",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-169",
+    "garmentName": "Short/ Capri",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 12,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-170",
+    "garmentName": "Jumper",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-171",
+    "garmentName": "Salwar Plain",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-172",
+    "garmentName": "Salwar Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-173",
+    "garmentName": "Salwar Very Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 25,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-174",
+    "garmentName": "Palazzo Plain",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-175",
+    "garmentName": "Palazzo Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-176",
+    "garmentName": "Short Skirt Plain",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-177",
+    "garmentName": "Short Skirt Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-178",
+    "garmentName": "Short Skirt Very Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 25,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-179",
+    "garmentName": "Long Skirt Plain",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-180",
+    "garmentName": "Long Skirt Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 25,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-181",
+    "garmentName": "Long Skirt Very Heavy",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-182",
+    "garmentName": "Petti Coat",
+    "category": "STEAM IRONING - BOTTOM WEAR",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-183",
+    "garmentName": "Starched shirt / Pant",
+    "category": "STEAM IRONING - STARCH",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-184",
+    "garmentName": "Starched saree",
+    "category": "STEAM IRONING - STARCH",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-185",
+    "garmentName": "Starch + steam iron (shirt / pant etc)",
+    "category": "STEAM IRONING - STARCH",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-186",
+    "garmentName": "Starch + steam iron (sarees etc)",
+    "category": "STEAM IRONING - STARCH",
+    "price": 90,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-187",
+    "garmentName": "Starch + Steam iron (Kurti / Kurta)",
+    "category": "STEAM IRONING - STARCH",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-188",
+    "garmentName": "Starch + Steam iron (pyjama)",
+    "category": "STEAM IRONING - STARCH",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-189",
+    "garmentName": "Starch only based on the Item",
+    "category": "STEAM IRONING - STARCH",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-190",
+    "garmentName": "Sherwani 2 Pcs Light",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 120,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-191",
+    "garmentName": "Sherwani 2 Pcs Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-192",
+    "garmentName": "Sherwani 3 Pcs Light",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-193",
+    "garmentName": "Sherwani 3 Pcs Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 200,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-194",
+    "garmentName": "Groom Sherwani (Weight upto 2.5Kgs)",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-195",
+    "garmentName": "Groom Sherwani (Weight upto 5Kgs)",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 350,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-196",
+    "garmentName": "Groom Sherwani (Weight upto 10Kgs)",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 450,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-197",
+    "garmentName": "Saree Plain",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-198",
+    "garmentName": "Saree Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 70,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-199",
+    "garmentName": "Saree Very Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 75,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": "Base price"
+  },
+  {
+    "id": "item-200",
+    "garmentName": "Bridal Saree (Weight upto 2.5Kgs)",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 180,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-201",
+    "garmentName": "Bridal Saree (Weight upto 5Kgs)",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 250,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-202",
+    "garmentName": "Bridal Saree (Weight upto 10Kgs)",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 400,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-203",
+    "garmentName": "Lehenga 1 Pc Plain",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-204",
+    "garmentName": "Lehenga 1 Pc Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-205",
+    "garmentName": "Lehenga 3 Pcs Plain",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-206",
+    "garmentName": "Lehenga 3 Pcs Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-207",
+    "garmentName": "Gown Plain",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-208",
+    "garmentName": "Gown Heavy",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-209",
+    "garmentName": "Gown Bridal",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 150,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-210",
+    "garmentName": "Dungaree",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 25,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-211",
+    "garmentName": "Long Frock",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-212",
+    "garmentName": "Sharara",
+    "category": "STEAM IRONING - FULL BODY",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-213",
+    "garmentName": "Woolen Shirt",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 20,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-214",
+    "garmentName": "Sweatshirt without Hood",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-215",
+    "garmentName": "Sweatshirt with Hood",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-216",
+    "garmentName": "Coat Normal",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-217",
+    "garmentName": "Coat (Fur Fluffy)",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 60,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-218",
+    "garmentName": "Long Coat Normal",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-219",
+    "garmentName": "Long Coat (Fur Fluffy)",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 80,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-220",
+    "garmentName": "Overcoat",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 100,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-221",
+    "garmentName": "Jacket Half Sleeves",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-222",
+    "garmentName": "Jacket Full Sleeves",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-223",
+    "garmentName": "Jacket with Hood",
+    "category": "STEAM IRONING - WINTER WEAR",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-224",
+    "garmentName": "Bedsheet - Single",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-225",
+    "garmentName": "Bedsheet - Double",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 50,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-226",
+    "garmentName": "Quilt Cover - Single",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 30,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-227",
+    "garmentName": "Quilt Cover - Double",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 40,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-228",
+    "garmentName": "Sofa/ Cushion/ Pillow Cover - Small",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 10,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-229",
+    "garmentName": "Sofa/ Cushion/ Pillow Cover - Medium",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 12,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-230",
+    "garmentName": "Sofa/ Cushion/ Pillow Cover - Large",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 12,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-231",
+    "garmentName": "Tablecloth - Small",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 10,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-232",
+    "garmentName": "Tablecloth - Large",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 15,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-233",
+    "garmentName": "Curtain Door without Liner/ Panel per sft",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 1.5,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-234",
+    "garmentName": "Curtain Door with Liner/ Panel per sft",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 2,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-235",
+    "garmentName": "Curtain Window without Liner Panel per sft",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 1.5,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
+  },
+  {
+    "id": "item-236",
+    "garmentName": "Curtain Window with Liner Panel per sft",
+    "category": "STEAM IRONING - HOUSEHOLD",
+    "price": 2,
+    "estimatedTime": "Standard Delivery: 2 Days",
+    "notes": ""
   }
 ]
