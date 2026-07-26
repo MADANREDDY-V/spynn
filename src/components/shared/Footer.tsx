@@ -12,7 +12,7 @@ export function Footer() {
           {/* Brand */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center">
-              <Image src="/logo.jpg" alt="SPYNN Logo" width={160} height={48} className="h-12 w-auto object-contain" />
+              <Image src="/logo.jpg" alt="SPYNN Logo" width={240} height={80} className="h-20 w-auto object-contain" />
             </Link>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               {siteConfig.description}

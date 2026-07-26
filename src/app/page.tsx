@@ -4,6 +4,14 @@ import { siteConfig } from "@/config/site";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CheckCircle2, ShieldCheck, Clock, MapPin, Search } from "lucide-react";
+import Image from "next/image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function Home() {
   return (
@@ -39,6 +47,29 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* 1.5. Promotional Banners */}
+      <section className="w-full py-12 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
+        <div className="container px-4 md:px-6">
+          <Carousel className="w-full max-w-4xl mx-auto" opts={{ loop: true }}>
+            <CarouselContent>
+              {[
+                "/banner1.jpg",
+                "/banner2.jpg",
+                "/banner3.jpg",
+              ].map((banner, index) => (
+                <CarouselItem key={index}>
+                  <div className="relative w-full aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden shadow-md">
+                    <Image src={banner} alt={`Promotion ${index + 1}`} fill className="object-cover" />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex -left-12" />
+            <CarouselNext className="hidden md:flex -right-12" />
+          </Carousel>
         </div>
       </section>
 

@@ -43,9 +43,9 @@ export function Navbar() {
       }`}
     >
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-24 items-center justify-between">
           <Link href="/" className="flex items-center">
-            <Image src="/logo.jpg" alt="SPYNN Logo" width={160} height={48} className="h-12 w-auto object-contain" />
+            <Image src="/logo.jpg" alt="SPYNN Logo" width={240} height={80} className="h-20 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}
