@@ -61,8 +61,8 @@ export default function Home() {
                 "/banner3.jpg",
               ].map((banner, index) => (
                 <CarouselItem key={index}>
-                  <div className="relative w-full aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden shadow-md">
-                    <Image src={banner} alt={`Promotion ${index + 1}`} fill className="object-cover" />
+                  <div className="relative w-full aspect-square max-h-[600px] bg-slate-50 dark:bg-slate-950 rounded-2xl overflow-hidden shadow-md mx-auto">
+                    <Image src={banner} alt={`Promotion ${index + 1}`} fill className="object-contain" />
                   </div>
                 </CarouselItem>
               ))}
