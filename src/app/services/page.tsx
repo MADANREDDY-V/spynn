@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Sparkles, Wind, Waves, Pocket, Bed, ShieldCheck, ArrowRight } from "lucide-react";
+import { Sparkles, Wind, Waves, Package, Bed, ShieldCheck, ArrowRight } from "lucide-react";
 
 const services = [
   {
@@ -28,7 +28,7 @@ const services = [
   {
     id: "shoe-cleaning",
     title: "Shoe & Sneaker Spa",
-    icon: <Pocket className="w-8 h-8 text-accent" />,
+    icon: <Package className="w-8 h-8 text-accent" />,
     description: "Deep interior and exterior cleaning for sneakers, leather shoes, and suede. Restores color and removes odors.",
     features: ["Inside-out cleaning", "Deodorization", "Material-specific care"]
   },
