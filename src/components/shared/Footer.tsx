@@ -11,8 +11,16 @@ export function Footer() {
           
           {/* Brand */}
           <div className="flex flex-col gap-4">
-            <Link href="/" className="flex items-center">
-              <Image src="/logo_horizontal.png" alt="SPYNN Logo" width={240} height={80} className="h-16 md:h-20 w-auto object-contain" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <Image src="/logo_icon.png" alt="SPYNN Logo" width={64} height={64} className="h-12 w-12 md:h-14 md:w-14 object-contain transition-transform group-hover:scale-105" />
+              <div className="flex flex-col justify-center">
+                <span className="text-2xl md:text-3xl font-black tracking-tighter text-[#0b1742] dark:text-white leading-none">
+                  SPYNN
+                </span>
+                <span className="text-[0.6rem] md:text-xs font-bold tracking-[0.2em] text-[#00a3e0] uppercase leading-tight mt-0.5">
+                  Dry Cleaning Studio
+                </span>
+              </div>
             </Link>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               {siteConfig.description}

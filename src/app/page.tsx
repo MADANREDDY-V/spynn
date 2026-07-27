@@ -73,21 +73,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. Trusted Community Service */}
-      <section className="w-full py-12 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
-        <div className="container px-4 md:px-6">
-          <p className="text-center text-sm font-semibold text-slate-500 uppercase tracking-widest mb-8">
-            Trusted by residents in premium societies
-          </p>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale">
-            {/* Placeholders for society logos */}
-            <div className="text-xl font-bold font-serif">The Prestige</div>
-            <div className="text-xl font-bold font-serif">Lodha Luxury</div>
-            <div className="text-xl font-bold font-serif">Godrej Infinity</div>
-            <div className="text-xl font-bold font-serif">DLF Crest</div>
-          </div>
-        </div>
-      </section>
 
       {/* 3. How It Works */}
       <section className="w-full py-24 bg-slate-50 dark:bg-slate-900">
@@ -177,11 +162,9 @@ export default function Home() {
                 <Button className="rounded-full bg-white text-primary hover:bg-slate-100">Learn About Our Process</Button>
               </Link>
             </div>
-            <div className="relative h-[500px] rounded-3xl overflow-hidden bg-slate-800">
-              {/* Placeholder for a high-quality studio image */}
-              <div className="absolute inset-0 flex items-center justify-center text-slate-500">
-                [Premium Studio Image]
-              </div>
+            <div className="relative h-[500px] rounded-3xl overflow-hidden bg-gradient-to-br from-primary via-blue-800 to-accent flex items-center justify-center shadow-2xl">
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+              <div className="text-white/5 text-9xl font-black rotate-[-10deg] select-none tracking-tighter">SPYNN</div>
             </div>
           </div>
         </div>
@@ -194,16 +177,7 @@ export default function Home() {
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-12">
             SPYNN currently serves only selected gated communities to maintain our premium quality of service.
           </p>
-          <div className="max-w-md mx-auto relative mb-12">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <input 
-              type="text" 
-              placeholder="Search your community..." 
-              className="w-full h-14 pl-12 pr-4 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-accent"
-              readOnly
-            />
-            {/* Simple mock search bar for visual purpose on homepage */}
-          </div>
+
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/communities">
               <Button className="rounded-full h-12 px-8 shadow-sm">View All Available Communities</Button>
