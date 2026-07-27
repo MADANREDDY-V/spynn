@@ -170,19 +170,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Communities We Serve */}
+      {/* 6. Community Launch Program */}
       <section className="w-full py-24 bg-slate-50 dark:bg-slate-900">
         <div className="container px-4 md:px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-white mb-4">Communities We Serve</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-12">
-            SPYNN currently serves only selected gated communities to maintain our premium quality of service.
+          <div className="inline-flex items-center justify-center px-4 py-1.5 mb-6 rounded-full bg-accent/10 text-accent font-medium text-sm">
+            Coming Soon
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-white mb-4">Community Launch Program</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+            SPYNN is preparing to launch premium dry cleaning services exclusively for gated communities. We are currently onboarding our first partner communities.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/communities">
-              <Button className="rounded-full h-12 px-8 shadow-sm">View All Available Communities</Button>
+              <Button className="rounded-full h-12 px-8 shadow-sm bg-primary hover:bg-primary/90">Join the Launch Program</Button>
             </Link>
-            <Button variant="outline" className="rounded-full h-12 px-8">Request Your Community</Button>
           </div>
         </div>
       </section>
@@ -197,7 +199,7 @@ export default function Home() {
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-left text-lg font-medium">What areas do you serve?</AccordionTrigger>
               <AccordionContent className="text-slate-600 dark:text-slate-400 text-base leading-relaxed">
-                We exclusively serve selected premium gated communities. You can check if your community is on our list on the Communities page. If not, you can request us to partner with your society.
+                We are launching exclusively in selected premium gated communities. You can join the waitlist or request a partnership for your community on our Community Launch Program page.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
