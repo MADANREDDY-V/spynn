@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { ComingSoonModal } from "@/components/shared/ComingSoonModal";
 import { Sparkles, Wind, Waves, Package, Bed, ShieldCheck, ArrowRight } from "lucide-react";
 
 const services = [
@@ -80,11 +80,13 @@ export default function ServicesPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/book" className="mt-auto">
-                <Button className="w-full rounded-full bg-slate-100 text-primary hover:bg-primary hover:text-white dark:bg-slate-900 dark:text-white dark:hover:bg-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                  Book {service.title} <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+              <div className="mt-auto">
+                <ComingSoonModal>
+                  <Button className="w-full rounded-full bg-slate-100 text-primary hover:bg-primary hover:text-white dark:bg-slate-900 dark:text-white dark:hover:bg-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                    Book {service.title} <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </ComingSoonModal>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -98,11 +100,13 @@ export default function ServicesPage() {
         <p className="text-slate-300 mb-8 max-w-2xl mx-auto text-lg relative z-10">
           Schedule your first pickup today. Free pickup and delivery from your community.
         </p>
-        <Link href="/book" className="relative z-10">
-          <Button size="lg" className="rounded-full bg-white text-primary hover:bg-slate-100 h-14 px-10 text-base shadow-lg">
-            Schedule a Pickup Now
-          </Button>
-        </Link>
+        <div className="relative z-10">
+          <ComingSoonModal>
+            <Button size="lg" className="rounded-full bg-white text-primary hover:bg-slate-100 h-14 px-10 text-base shadow-lg">
+              Schedule a Pickup Now
+            </Button>
+          </ComingSoonModal>
+        </div>
       </div>
 
     </div>

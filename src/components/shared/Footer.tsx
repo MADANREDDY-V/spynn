@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { ComingSoonModal } from "./ComingSoonModal";
 
 export function Footer() {
   return (
@@ -34,7 +35,9 @@ export function Footer() {
               <Link href="/services" className="hover:text-accent transition-colors">Our Services</Link>
               <Link href="/pricing" className="hover:text-accent transition-colors">Price List</Link>
               <Link href="/communities" className="hover:text-accent transition-colors">Communities</Link>
-              <Link href="/book" className="hover:text-accent transition-colors">Book Pickup</Link>
+              <ComingSoonModal>
+                <button className="text-left hover:text-accent transition-colors">Book Pickup</button>
+              </ComingSoonModal>
               <Link href="/status" className="hover:text-accent transition-colors">Order Status</Link>
             </nav>
           </div>

@@ -8,6 +8,7 @@ import { Menu, X, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { motion, AnimatePresence } from "framer-motion";
+import { ComingSoonModal } from "./ComingSoonModal";
 
 const navLinks = [
   { title: "Home", href: "/" },
@@ -72,11 +73,11 @@ export function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/book">
+            <ComingSoonModal>
               <Button className="rounded-full shadow-lg bg-primary hover:bg-primary/90 text-white">
                 Book Pickup
               </Button>
-            </Link>
+            </ComingSoonModal>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -111,11 +112,13 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="h-px bg-slate-100 dark:bg-slate-800 my-2" />
-              <Link href="/book" className="w-full">
-                <Button className="w-full rounded-full bg-primary hover:bg-primary/90 text-white" size="lg">
-                  Book Pickup
-                </Button>
-              </Link>
+              <div className="w-full">
+                <ComingSoonModal>
+                  <Button className="w-full rounded-full bg-primary hover:bg-primary/90 text-white" size="lg">
+                    Book Pickup
+                  </Button>
+                </ComingSoonModal>
+              </div>
               <a href={`tel:${siteConfig.contact.phone.replace(/\s+/g, '')}`} className="w-full">
                 <Button variant="outline" className="w-full rounded-full" size="lg">
                   <PhoneCall className="mr-2 h-4 w-4" />

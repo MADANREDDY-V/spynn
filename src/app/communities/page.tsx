@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ComingSoonModal } from "@/components/shared/ComingSoonModal";
 
 export default function CommunitiesPage() {
   return (
@@ -144,9 +145,14 @@ export default function CommunitiesPage() {
                 <Label htmlFor="phone">Phone Number</Label>
                 <Input id="phone" type="tel" placeholder="9866654304" className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus-visible:ring-accent" />
               </div>
-              <Button type="button" className="w-full h-14 rounded-full bg-primary hover:bg-primary/90 text-lg shadow-md mt-2">
-                Submit Interest
-              </Button>
+              <ComingSoonModal 
+                title="Feature Coming Soon" 
+                description="Thank you for your interest! We are actively reviewing community requests and will be in touch shortly."
+              >
+                <Button type="button" className="w-full h-14 rounded-full bg-primary hover:bg-primary/90 text-lg shadow-md mt-2">
+                  Submit Interest
+                </Button>
+              </ComingSoonModal>
             </form>
           </CardContent>
         </Card>
