@@ -45,7 +45,7 @@ export default function ContactPage() {
             <div>
               <h3 className="text-2xl font-bold text-primary dark:text-white mb-2">WhatsApp</h3>
               <p className="text-slate-600 dark:text-slate-400 mb-6">Chat with us for quick responses and booking.</p>
-              <a href={`https://wa.me/${siteConfig.contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full block">
+              <a href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hi%20SPYNN,%20I%20would%20like%20to%20know%20more%20about%20your%20services.`} target="_blank" rel="noopener noreferrer" className="w-full block">
                 <Button className="w-full h-14 text-lg rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-md flex items-center justify-center gap-2">
                   Chat Now <ExternalLink className="w-4 h-4" />
                 </Button>

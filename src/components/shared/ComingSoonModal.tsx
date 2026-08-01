@@ -54,7 +54,7 @@ export function ComingSoonModal({
                 <Phone className="w-4 h-4 mr-2" /> Call Now
               </Button>
             </a>
-            <a href={`https://wa.me/${siteConfig.contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full">
+            <a href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hi%20SPYNN,%20I%20would%20like%20to%20know%20more%20about%20your%20services.`} target="_blank" rel="noopener noreferrer" className="w-full">
               <Button variant="outline" className="w-full h-12 rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 flex items-center justify-center font-medium text-base">
                 <MessageCircle className="w-4 h-4 mr-2 text-[#25D366]" /> WhatsApp
               </Button>
