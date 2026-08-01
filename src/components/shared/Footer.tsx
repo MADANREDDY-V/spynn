@@ -57,10 +57,7 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <h4 className="font-semibold text-primary dark:text-white">Contact Us</h4>
             <ul className="flex flex-col gap-3 text-sm text-slate-600 dark:text-slate-400">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                <span>{siteConfig.contact.address}</span>
-              </li>
+
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-accent shrink-0" />
                 <a href={`tel:${siteConfig.contact.phone.replace(/\s+/g, '')}`} className="hover:text-accent transition-colors">

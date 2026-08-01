@@ -6,7 +6,7 @@ export const siteConfig = {
     phone: "+91 98666 54304",
     whatsapp: "919866654304", // for whatsapp link
     email: "care@spynn.studio",
-    address: "123 Premium Society Road, Luxury Block, Metro City, 400001",
+
     workingHours: "Monday to Sunday, 8:00 AM - 9:00 PM",
     emergencyContact: "+91 98666 54304",
   },
