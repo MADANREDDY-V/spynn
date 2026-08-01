@@ -1,186 +1,269 @@
-'use client'
+'use client';
 
-import { siteConfig } from "@/config/site";
-import { Building2, Rocket, Sparkles, MapPin, Handshake, Calendar, ArrowRight, MessageCircle, Phone, CheckCircle2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ComingSoonModal } from "@/components/shared/ComingSoonModal";
+import { useState } from 'react';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, MapPin, Building2, Truck, Star, Sparkles, Clock, CheckCircle2, Map as MapIcon, ArrowRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { RequestCommunityModal } from '@/components/shared/RequestCommunityModal';
+import communitiesData from '@/data/communities.json';
+
+// Helper for Animated Counters
+const AnimatedCounter = ({ value, suffix = "" }: { value: number, suffix?: string }) => {
+  return (
+    <motion.span
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      {value}{suffix}
+    </motion.span>
+  );
+};
 
 export default function CommunitiesPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredCommunities = communitiesData.filter(c => 
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24">
       
-      {/* Header Section */}
-      <div className="text-center max-w-3xl mx-auto mb-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-primary dark:text-white mb-6">
-          Community Launch Program
-        </h1>
-        <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
-          SPYNN is preparing to launch premium dry cleaning services for gated communities. We are currently onboarding our first partner communities.
-        </p>
-      </div>
-
-      {/* Main Announcement Card */}
-      <div className="max-w-5xl mx-auto mb-20">
-        <Card className="border-none shadow-2xl bg-gradient-to-br from-primary via-blue-900 to-accent overflow-hidden rounded-[2rem] animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-150">
-          <CardContent className="p-0 relative">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-            <div className="relative z-10 p-10 md:p-16 flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white mb-8 shadow-inner relative">
-                <Rocket className="w-10 h-10" />
-                <div className="absolute -top-2 -right-2 bg-accent text-primary text-[0.65rem] font-bold uppercase tracking-wider py-1 px-3 rounded-full animate-pulse shadow-lg">
-                  Coming Soon
-                </div>
-              </div>
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">We're Getting Ready</h2>
-              <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
-                Our services will begin shortly in selected residential communities. We're working closely with community management teams to ensure a seamless launch experience from day one.
-              </p>
+      {/* Hero Section */}
+      <section className="pt-24 pb-16 px-4 relative overflow-hidden bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:32px_32px]"></div>
+        <div className="container mx-auto max-w-5xl text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent font-medium text-sm mb-6">
+              <Sparkles className="w-4 h-4" /> Premium Community Service
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-primary dark:text-white mb-6">
+              Communities We Currently Serve
+            </h1>
+            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed mb-12">
+              SPYNN proudly provides premium doorstep dry cleaning and garment care services exclusively to these gated communities.
+            </p>
+          </motion.div>
 
-      {/* Expansion Timeline */}
-      <div className="max-w-5xl mx-auto mb-24 animate-in fade-in duration-1000 delay-300">
-        <h2 className="text-2xl md:text-3xl font-bold text-center text-primary dark:text-white mb-16">Launch Roadmap</h2>
-        <div className="relative border-l-2 border-slate-100 dark:border-slate-800 md:border-none md:flex justify-between items-start ml-4 md:ml-0 gap-6">
-          {/* Phase 1 (Active) */}
-          <div className="relative pl-8 md:pl-0 md:flex-1 md:text-center pb-12 md:pb-0 group">
-            <div className="absolute left-[-9px] top-1 md:left-1/2 md:-translate-x-1/2 md:-top-4 w-4 h-4 rounded-full bg-accent ring-4 ring-accent/20 z-10 transition-all duration-300"></div>
-            <div className="hidden md:block absolute top-[-7px] left-1/2 right-[-50%] h-0.5 bg-slate-100 dark:bg-slate-800 z-0"></div>
-            <h3 className="text-lg font-bold text-primary dark:text-white mb-2">Phase 1</h3>
-            <p className="text-accent font-medium">Community Partnerships</p>
+          {/* Statistics Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+              <Building2 className="w-8 h-8 text-primary mb-3" />
+              <div className="text-3xl font-bold text-primary dark:text-white mb-1"><AnimatedCounter value={4} suffix="+" /></div>
+              <div className="text-sm text-slate-500 font-medium text-center">Communities Served</div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+              <Truck className="w-8 h-8 text-accent mb-3" />
+              <div className="text-xl font-bold text-primary dark:text-white mb-1 mt-2 text-center leading-tight">Free Pickup</div>
+              <div className="text-sm text-slate-500 font-medium text-center">& Delivery</div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+              <Star className="w-8 h-8 text-yellow-500 mb-3" />
+              <div className="text-xl font-bold text-primary dark:text-white mb-1 mt-2 text-center leading-tight">Premium</div>
+              <div className="text-sm text-slate-500 font-medium text-center">Community Service</div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }} className="flex flex-col items-center p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+              <Sparkles className="w-8 h-8 text-blue-500 mb-3" />
+              <div className="text-xl font-bold text-primary dark:text-white mb-1 mt-2 text-center leading-tight">6+ Services</div>
+              <div className="text-sm text-slate-500 font-medium text-center text-xs">Dry Clean, Steam, Shoe...</div>
+            </motion.div>
           </div>
+        </div>
+      </section>
 
-          {/* Phase 2 */}
-          <div className="relative pl-8 md:pl-0 md:flex-1 md:text-center pb-12 md:pb-0 opacity-50 grayscale">
-            <div className="absolute left-[-9px] top-1 md:left-1/2 md:-translate-x-1/2 md:-top-4 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 z-10"></div>
-            <div className="hidden md:block absolute top-[-7px] left-1/2 right-[-50%] h-0.5 bg-slate-100 dark:bg-slate-800 z-0"></div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">Phase 2</h3>
-            <p className="text-slate-600 dark:text-slate-400 font-medium">Pilot Launch</p>
-          </div>
-
-          {/* Phase 3 */}
-          <div className="relative pl-8 md:pl-0 md:flex-1 md:text-center pb-12 md:pb-0 opacity-50 grayscale">
-            <div className="absolute left-[-9px] top-1 md:left-1/2 md:-translate-x-1/2 md:-top-4 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 z-10"></div>
-            <div className="hidden md:block absolute top-[-7px] left-1/2 right-[-50%] h-0.5 bg-slate-100 dark:bg-slate-800 z-0"></div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">Phase 3</h3>
-            <p className="text-slate-600 dark:text-slate-400 font-medium">Resident Bookings</p>
-          </div>
-
-          {/* Phase 4 */}
-          <div className="relative pl-8 md:pl-0 md:flex-1 md:text-center opacity-50 grayscale">
-            <div className="absolute left-[-9px] top-1 md:left-1/2 md:-translate-x-1/2 md:-top-4 w-4 h-4 rounded-full bg-slate-300 dark:bg-slate-700 z-10"></div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">Phase 4</h3>
-            <p className="text-slate-600 dark:text-slate-400 font-medium">City Expansion</p>
-          </div>
+      {/* Social Proof */}
+      <div className="w-full bg-primary py-4 overflow-hidden flex whitespace-nowrap">
+        <div className="animate-marquee flex gap-8 items-center text-white/80 font-medium">
+          <span className="mx-4">Trusted by Premium Communities</span> •
+          {communitiesData.map(c => <span key={c.id} className="mx-4">{c.name}</span>)} •
+          <span className="mx-4">Trusted by Premium Communities</span> •
+          {communitiesData.map(c => <span key={c.id + 'dup'} className="mx-4">{c.name}</span>)}
         </div>
       </div>
 
-      {/* Trust Banner */}
-      <div className="w-full bg-slate-50 dark:bg-slate-900 border-y border-slate-100 dark:border-slate-800 py-12 mb-24 text-center px-4">
-        <p className="text-xl md:text-2xl font-medium text-slate-700 dark:text-slate-300 max-w-4xl mx-auto leading-relaxed">
-          "Premium service takes careful planning. We're launching thoughtfully to ensure every customer receives an outstanding experience."
-        </p>
-      </div>
-
-      {/* Dual Interest Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto mb-24">
+      <div className="container mx-auto px-4 py-16 max-w-6xl">
         
-        {/* RWA Section */}
-        <Card className="border-none shadow-xl bg-white dark:bg-slate-950 rounded-3xl overflow-hidden hover:shadow-2xl transition-all h-full">
-          <CardContent className="p-8 md:p-12 flex flex-col h-full">
-            <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-8">
-              <Handshake className="w-8 h-8" />
-            </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-primary dark:text-white mb-4">Want SPYNN in Your Community?</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-10 flex-grow text-lg">
-              If you're a Resident Welfare Association (RWA), Apartment Association, or Community Management Team, we'd love to partner with you to offer premium garment care to your residents.
-            </p>
-            <div className="flex flex-col gap-4">
-              <a href={`tel:${siteConfig.contact.phone.replace(/\s+/g, '')}`}>
-                <Button className="w-full h-14 rounded-full bg-primary hover:bg-primary/90 text-lg shadow-md">
-                  Request a Demo
-                </Button>
-              </a>
-              <div className="grid grid-cols-2 gap-4">
-                <a href={`https://wa.me/${siteConfig.contact.whatsapp}`} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" className="w-full h-12 rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 flex items-center justify-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-[#25D366]" /> WhatsApp
-                  </Button>
-                </a>
-                <a href="/contact">
-                  <Button variant="outline" className="w-full h-12 rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
-                    Contact Us
-                  </Button>
-                </a>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Residents Section */}
-        <Card className="border-slate-200 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-950 rounded-3xl overflow-hidden hover:shadow-2xl transition-all h-full">
-          <CardContent className="p-8 md:p-12 flex flex-col h-full">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary dark:text-white mb-8">
-              <Building2 className="w-8 h-8" />
-            </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-primary dark:text-white mb-4">Interested in SPYNN?</h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-10 text-lg">
-              Tell us which community you live in. When we launch there, you'll be among the first to know.
-            </p>
-            <form className="space-y-6 mt-auto">
-              <div className="space-y-2">
-                <Label htmlFor="community">Community Name</Label>
-                <Input id="community" placeholder="e.g. The Prestige" className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus-visible:ring-accent" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">Your Name</Label>
-                <Input id="name" placeholder="John Doe" className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus-visible:ring-accent" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" placeholder="9866654304" className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus-visible:ring-accent" />
-              </div>
-              <ComingSoonModal 
-                title="Feature Coming Soon" 
-                description="Thank you for your interest! We are actively reviewing community requests and will be in touch shortly."
-              >
-                <Button type="button" className="w-full h-14 rounded-full bg-primary hover:bg-primary/90 text-lg shadow-md mt-2">
-                  Submit Interest
-                </Button>
-              </ComingSoonModal>
-            </form>
-          </CardContent>
-        </Card>
-
-      </div>
-
-      {/* Bottom CTA */}
-      <div className="max-w-4xl mx-auto bg-accent/5 dark:bg-accent/10 border border-accent/20 rounded-3xl p-10 md:p-16 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-primary dark:text-white mb-6">
-          Bring SPYNN to Your Community
-        </h2>
-        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto">
-          Be among the first communities to experience premium doorstep dry cleaning. Schedule a meeting with our partnerships team today.
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-          <a href="/contact" className="w-full sm:w-auto">
-            <Button size="lg" className="w-full rounded-full bg-primary hover:bg-primary/90 h-14 px-8 text-lg shadow-md flex items-center justify-center gap-2">
-              <Calendar className="w-5 h-5" /> Schedule a Meeting
-            </Button>
-          </a>
-          <a href={`https://wa.me/${siteConfig.contact.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-            <Button variant="outline" size="lg" className="w-full rounded-full h-14 px-8 text-lg border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 flex items-center justify-center gap-2">
-              <MessageCircle className="w-5 h-5 text-[#25D366]" /> WhatsApp
-            </Button>
-          </a>
+        {/* Search & Filter */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary dark:text-white">
+            Find Your Community
+          </h2>
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Input 
+              placeholder="Search Community... (e.g. Hallmark)" 
+              className="pl-12 h-14 rounded-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm text-lg focus-visible:ring-accent"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
 
+        {/* Communities Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+          <AnimatePresence>
+            {filteredCommunities.map((community, index) => (
+              <motion.div
+                key={community.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                whileHover={{ y: -8, scale: 1.01 }}
+                className="group relative"
+              >
+                <Link href={`/community/${community.slug}`}>
+                  <Card className="h-full border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 relative before:absolute before:inset-0 before:p-[2px] before:bg-gradient-to-br before:from-accent/0 before:to-primary/0 hover:before:from-accent hover:before:to-primary before:-z-10 before:rounded-[25px] before:transition-all z-0 bg-clip-padding border-[3px] border-transparent">
+                    <CardContent className="p-0 flex flex-col h-full bg-white dark:bg-slate-900 rounded-[21px] z-10 relative">
+                      <div className="h-48 bg-slate-100 dark:bg-slate-800 relative overflow-hidden flex items-center justify-center">
+                        {/* Placeholder for actual image */}
+                        <Building2 className="w-16 h-16 text-slate-300 dark:text-slate-600 absolute" />
+                        <div className="absolute top-4 left-4 bg-green-500/10 backdrop-blur-md text-green-700 dark:text-green-400 font-semibold px-3 py-1 rounded-full text-sm flex items-center gap-2 border border-green-500/20 shadow-sm">
+                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> {community.status}
+                        </div>
+                        <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-primary font-semibold px-3 py-1 rounded-full text-xs shadow-sm flex items-center gap-1">
+                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" /> Premium Partner
+                        </div>
+                      </div>
+                      
+                      <div className="p-8 flex flex-col flex-grow">
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-2xl font-bold text-primary dark:text-white group-hover:text-accent transition-colors">
+                            {community.name}
+                          </h3>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-500 mb-6">
+                          <MapPin className="w-4 h-4" /> {community.location}
+                        </div>
+
+                        <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 mb-6 border border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center gap-2 text-primary dark:text-white font-medium mb-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+                            <Truck className="w-4 h-4 text-accent" /> Free Pickup & Delivery
+                          </div>
+                          <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+                            {community.services.slice(0, 4).map((service, i) => (
+                              <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                                <CheckCircle2 className="w-4 h-4 text-green-500 flex-shrink-0" /> {service}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="mt-auto flex items-center justify-between pt-4">
+                          <div className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+                            <Clock className="w-4 h-4" /> Est. {community.estimatedPickup}
+                          </div>
+                          <Button className="rounded-full bg-primary hover:bg-primary/90 text-white shadow-md group-hover:shadow-lg transition-all px-6">
+                            Book Pickup <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+            
+            {filteredCommunities.length === 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-full py-16 text-center">
+                <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-slate-600 mb-2">No communities found</h3>
+                <p className="text-slate-500">We couldn't find a community matching your search.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Hyderabad Map Section */}
+        <section className="mb-24 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-2 md:p-4 shadow-xl overflow-hidden relative">
+           <div className="absolute top-8 left-8 z-20 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-slate-100 max-w-sm">
+             <h3 className="text-2xl font-bold text-primary mb-2 flex items-center gap-2">
+               <MapIcon className="w-6 h-6 text-accent" /> SPYNN Coverage
+             </h3>
+             <p className="text-slate-600">Currently serving premium gated communities across West Hyderabad.</p>
+           </div>
+           
+           {/* Stylized CSS Map representation for a premium look since we don't have API keys */}
+           <div className="w-full h-[500px] bg-slate-50 dark:bg-slate-950 rounded-[20px] relative overflow-hidden flex items-center justify-center">
+              {/* Map Grid Pattern */}
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,#0b1f3a_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+              
+              {/* Fake Map Paths (Decorative) */}
+              <svg className="absolute inset-0 w-full h-full text-slate-200 dark:text-slate-800" xmlns="http://www.w3.org/2000/svg">
+                <path d="M-100,200 Q150,300 400,100 T800,250 T1200,100" fill="none" stroke="currentColor" strokeWidth="8" />
+                <path d="M0,400 Q200,350 300,500 T700,400 T1000,550" fill="none" stroke="currentColor" strokeWidth="12" />
+              </svg>
+
+              {/* Central Map Pins */}
+              <div className="relative w-full max-w-2xl h-full mx-auto">
+                {/* Cluster Area Circle */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent/5 rounded-full border border-accent/20 animate-pulse"></div>
+                
+                {/* Pin 1: Tellapur */}
+                <motion.div initial={{ y: -20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} viewport={{ once: true }} className="absolute top-[35%] left-[30%] flex flex-col items-center group cursor-pointer">
+                  <div className="bg-white px-3 py-1 rounded-full shadow-md text-xs font-bold text-primary mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Tellapur / Nallagandla</div>
+                  <div className="w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg flex items-center justify-center relative">
+                    <span className="absolute w-full h-full bg-accent rounded-full animate-ping opacity-75"></span>
+                  </div>
+                </motion.div>
+
+                {/* Pin 2: Puppalaguda */}
+                <motion.div initial={{ y: -20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} viewport={{ once: true }} className="absolute top-[45%] left-[55%] flex flex-col items-center group cursor-pointer">
+                  <div className="bg-white px-3 py-1 rounded-full shadow-md text-xs font-bold text-primary mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Puppalaguda</div>
+                  <div className="w-6 h-6 bg-accent rounded-full border-4 border-white shadow-lg flex items-center justify-center relative">
+                    <span className="absolute w-full h-full bg-accent rounded-full animate-ping opacity-75"></span>
+                  </div>
+                </motion.div>
+
+                {/* Pin 3: Narsingi */}
+                <motion.div initial={{ y: -20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }} viewport={{ once: true }} className="absolute top-[55%] left-[45%] flex flex-col items-center group cursor-pointer">
+                  <div className="bg-white px-3 py-1 rounded-full shadow-md text-xs font-bold text-primary mb-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Narsingi / Alkapur</div>
+                  <div className="w-8 h-8 bg-primary rounded-full border-4 border-white shadow-lg flex items-center justify-center relative z-10">
+                    <Star className="w-3 h-3 text-white" />
+                    <span className="absolute w-full h-full bg-primary rounded-full animate-ping opacity-75"></span>
+                  </div>
+                </motion.div>
+
+              </div>
+           </div>
+        </section>
+
+        {/* Expansion CTA */}
+        <section className="bg-gradient-to-br from-primary via-blue-900 to-primary rounded-[3rem] p-10 md:p-16 text-center shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+              Don't See Your Community?
+            </h2>
+            <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed">
+              We're actively expanding across Hyderabad. Request your community and our team will get in touch with your apartment association.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <RequestCommunityModal trigger={
+                <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full bg-accent hover:bg-accent/90 text-primary font-bold shadow-lg hover:shadow-xl transition-all">
+                  Request Your Community
+                </Button>
+              } />
+              <Link href="/contact" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto h-14 px-8 text-lg rounded-full border-white/20 text-white hover:bg-white/10 backdrop-blur-sm">
+                  Contact SPYNN
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+      </div>
     </div>
   );
 }

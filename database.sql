@@ -84,3 +84,29 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- 4. Community Requests Table
+create table public.community_requests (
+  id uuid default uuid_generate_v4() primary key,
+  community_name text not null,
+  area text not null,
+  number_of_flats text,
+  contact_person text not null,
+  phone text not null,
+  email text not null,
+  notes text,
+  status text default 'pending',
+  ip_address text,
+  source text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Community Requests RLS
+alter table public.community_requests enable row level security;
+create policy "Anyone can insert a community request." on community_requests for insert with check (true);
+create policy "Admins and Agents can view community requests." on community_requests for select using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can update community requests." on community_requests for update using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);

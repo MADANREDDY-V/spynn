@@ -1,0 +1,74 @@
+[
+  {
+    "id": "c1",
+    "slug": "gardenia-florence-villas",
+    "name": "Gardenia Florence Villas",
+    "location": "Tellapur",
+    "coordinates": { "lat": 17.464, "lng": 78.291 },
+    "image": "/images/communities/gardenia.jpg",
+    "status": "Currently Serving",
+    "services": [
+      "Dry Cleaning",
+      "Steam Ironing",
+      "Shoe Cleaning",
+      "Curtain Cleaning",
+      "Sofa Cleaning",
+      "Carpet Cleaning"
+    ],
+    "estimatedPickup": "Same Day"
+  },
+  {
+    "id": "c2",
+    "slug": "hallmark-skyrena",
+    "name": "Hallmark Skyrena",
+    "location": "Puppalaguda",
+    "coordinates": { "lat": 17.398, "lng": 78.373 },
+    "image": "/images/communities/skyrena.jpg",
+    "status": "Currently Serving",
+    "services": [
+      "Dry Cleaning",
+      "Steam Ironing",
+      "Shoe Cleaning",
+      "Curtain Cleaning",
+      "Sofa Cleaning",
+      "Carpet Cleaning"
+    ],
+    "estimatedPickup": "Same Day"
+  },
+  {
+    "id": "c3",
+    "slug": "hallmark-treasor",
+    "name": "Hallmark Treasor",
+    "location": "Alkapur Township",
+    "coordinates": { "lat": 17.387, "lng": 78.384 },
+    "image": "/images/communities/treasor.jpg",
+    "status": "Currently Serving",
+    "services": [
+      "Dry Cleaning",
+      "Steam Ironing",
+      "Shoe Cleaning",
+      "Curtain Cleaning",
+      "Sofa Cleaning",
+      "Carpet Cleaning"
+    ],
+    "estimatedPickup": "Same Day"
+  },
+  {
+    "id": "c4",
+    "slug": "vessella-meadows",
+    "name": "Vessella Meadows",
+    "location": "Narsingi",
+    "coordinates": { "lat": 17.385, "lng": 78.369 },
+    "image": "/images/communities/vessella.jpg",
+    "status": "Currently Serving",
+    "services": [
+      "Dry Cleaning",
+      "Steam Ironing",
+      "Shoe Cleaning",
+      "Curtain Cleaning",
+      "Sofa Cleaning",
+      "Carpet Cleaning"
+    ],
+    "estimatedPickup": "Same Day"
+  }
+]
