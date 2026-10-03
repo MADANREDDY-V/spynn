@@ -13,7 +13,6 @@ import { ComingSoonModal } from "./ComingSoonModal";
 const navLinks = [
   { title: "Home", href: "/" },
   { title: "Services", href: "/services" },
-  { title: "Pricing", href: "/pricing" },
   { title: "Communities", href: "/communities" },
   { title: "Contact", href: "/contact" },
 ];
