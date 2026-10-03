@@ -41,11 +41,6 @@ export default function Home() {
                 Book a Pickup
               </Button>
             </Link>
-            <Link href="/pricing" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full h-14 px-8 text-base rounded-full bg-white dark:bg-slate-950">
-                View Price List
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
