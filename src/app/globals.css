@@ -130,3 +130,59 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+  html,
+  body {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Hide the entire website UI, navbar, customer profile, and modals */
+  body > *:not(#spynn-print) {
+    display: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  #spynn-print {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  #spynn-print > div {
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+  #spynn-print thead {
+    display: table-header-group;
+  }
+  #spynn-print tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  #spynn-print .break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
