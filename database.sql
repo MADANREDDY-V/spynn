@@ -110,3 +110,134 @@ create policy "Admins and Agents can view community requests." on community_requ
 create policy "Admins and Agents can update community requests." on community_requests for update using (
   exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
 );
+
+-- ============================================================================
+-- 5. SPYNN Billing Module Schema
+-- ============================================================================
+
+-- 5.1 Billing Customers
+create table if not exists public.billing_customers (
+  id uuid default uuid_generate_v4() primary key,
+  name text not null,
+  mobile text not null,
+  email text,
+  address text,
+  notes text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_billing_customers_mobile on public.billing_customers (mobile);
+create index if not exists idx_billing_customers_name on public.billing_customers (name);
+
+-- 5.2 Billing Orders
+create table if not exists public.billing_orders (
+  id uuid default uuid_generate_v4() primary key,
+  order_number text unique not null,
+  customer_id uuid references public.billing_customers(id) on delete set null,
+  customer_name text not null,
+  customer_mobile text not null,
+  customer_address text,
+  subtotal numeric(12,2) not null default 0.00,
+  discount_percent numeric(5,2) not null default 0.00,
+  discount_amount numeric(12,2) not null default 0.00,
+  total numeric(12,2) not null default 0.00,
+  amount_paid numeric(12,2) not null default 0.00,
+  balance numeric(12,2) not null default 0.00,
+  payment_method text check (payment_method in ('Cash', 'Online', 'Split Payment')) default 'Cash',
+  cash_amount numeric(12,2),
+  online_amount numeric(12,2),
+  order_status text check (order_status in ('Received', 'Processing', 'Ready', 'Delivered')) default 'Received',
+  payment_status text check (payment_status in ('paid', 'partial', 'unpaid')) default 'unpaid',
+  notes text,
+  created_by uuid references auth.users(id) on delete set null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_billing_orders_order_number on public.billing_orders (order_number);
+create index if not exists idx_billing_orders_customer_id on public.billing_orders (customer_id);
+create index if not exists idx_billing_orders_customer_mobile on public.billing_orders (customer_mobile);
+create index if not exists idx_billing_orders_created_at on public.billing_orders (created_at desc);
+create index if not exists idx_billing_orders_status on public.billing_orders (order_status, payment_status);
+
+-- 5.3 Billing Order Items
+create table if not exists public.billing_order_items (
+  id uuid default uuid_generate_v4() primary key,
+  order_id uuid references public.billing_orders(id) on delete cascade not null,
+  garment_name text not null,
+  service text not null check (service in ('Dry Cleaning', 'Ironing', 'Shoe Cleaning', 'Household', 'Laundry')),
+  category text,
+  variant text,
+  quantity numeric(10,2) not null default 1.00,
+  unit_price numeric(10,2) not null default 0.00,
+  unit text default 'item',
+  line_total numeric(12,2) not null default 0.00,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_billing_order_items_order_id on public.billing_order_items (order_id);
+create index if not exists idx_billing_order_items_service on public.billing_order_items (service);
+
+-- 5.4 Billing Garment Price Overrides / Master Catalogue
+create table if not exists public.billing_garment_prices (
+  id uuid default uuid_generate_v4() primary key,
+  item_key text not null,
+  service text not null check (service in ('Dry Cleaning', 'Ironing', 'Shoe Cleaning', 'Household', 'Laundry')),
+  category text,
+  garment_name text not null,
+  variant text,
+  price numeric(10,2) not null,
+  unit text default 'item',
+  is_active boolean default true,
+  updated_by uuid references auth.users(id) on delete set null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  constraint billing_garment_prices_item_unique unique (item_key)
+);
+
+create index if not exists idx_billing_garment_prices_service on public.billing_garment_prices (service);
+
+-- ----------------------------------------------------------------------------
+-- Billing Row Level Security (RLS)
+-- ----------------------------------------------------------------------------
+
+alter table public.billing_customers enable row level security;
+create policy "Admins and Agents can view billing customers." on billing_customers for select using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can insert billing customers." on billing_customers for insert with check (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can update billing customers." on billing_customers for update using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+
+alter table public.billing_orders enable row level security;
+create policy "Admins and Agents can view billing orders." on billing_orders for select using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can insert billing orders." on billing_orders for insert with check (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can update billing orders." on billing_orders for update using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+
+alter table public.billing_order_items enable row level security;
+create policy "Admins and Agents can view billing order items." on billing_order_items for select using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can insert billing order items." on billing_order_items for insert with check (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can update billing order items." on billing_order_items for update using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+
+alter table public.billing_garment_prices enable row level security;
+create policy "Admins and Agents can view billing garment prices." on billing_garment_prices for select using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+create policy "Admins and Agents can insert/update billing garment prices." on billing_garment_prices for all using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
