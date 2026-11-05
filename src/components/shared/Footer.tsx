@@ -35,7 +35,7 @@ export function Footer() {
               Exceptional care for every fabric. Professional garment care, thoughtfully delivered to your residential community across Hyderabad.
             </p>
 
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex flex-wrap items-center gap-3 pt-2">
               <a
                 href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hi%20SPYNN,%20I%20would%20like%20to%20know%20more%20about%20your%20services.`}
                 target="_blank"
@@ -134,10 +134,12 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/60">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-6">
             <Link href="/about" className="hover:text-white transition-colors">About SPYNN</Link>
+            <Link href="/services" className="hover:text-white transition-colors">Services</Link>
             <Link href="/communities" className="hover:text-white transition-colors">Communities</Link>
             <Link href="/locations" className="hover:text-white transition-colors">Locations</Link>
+            <Link href="/franchise" className="hover:text-white transition-colors">Franchise</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link>
           </div>
         </div>

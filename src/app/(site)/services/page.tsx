@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
+import { ServiceImageCarousel } from "@/components/shared/ServiceImageCarousel";
+import { SERVICE_IMAGES } from "@/data/serviceImages";
 import {
   Sparkles,
   Wind,
@@ -164,7 +166,7 @@ export default function ServicesPage() {
     <div className="flex flex-col w-full min-h-screen bg-white">
       
       {/* Header Banner */}
-      <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-gradient-to-b from-[#F3F7FC] via-white to-white border-b border-slate-100">
+      <section className="relative pt-28 pb-12 md:pt-36 md:pb-16 overflow-hidden bg-gradient-to-b from-[#F3F7FC] via-white to-white border-b border-slate-100">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0866C5]/10 text-[#0866C5] font-semibold text-xs uppercase tracking-wider mb-5">
             <Sparkles className="h-3.5 w-3.5" />
@@ -193,9 +195,9 @@ export default function ServicesPage() {
       </section>
 
       {/* Individual Detailed Service Sections */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <div className="flex flex-col gap-20 md:gap-28">
+          <div className="flex flex-col gap-12 md:gap-16">
             {fullServices.map((service, index) => {
               const isEven = index % 2 === 1;
               return (
@@ -206,19 +208,19 @@ export default function ServicesPage() {
                 >
                   <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center ${isEven ? "lg:flex-row-reverse" : ""}`}>
                     
-                    {/* Visual Side */}
+                    {/* Visual Side Carousel */}
                     <div className={`lg:col-span-5 ${isEven ? "lg:order-2" : "lg:order-1"}`}>
                       <div className="relative aspect-4/3 rounded-2xl overflow-hidden shadow-lg border border-slate-100 bg-slate-100">
-                        <Image
-                          src={service.image}
-                          alt={service.title}
-                          fill
-                          sizes="(max-width: 1024px) 100vw, 40vw"
-                          className="object-cover"
-                        />
-                        <div className="absolute top-4 left-4 h-11 w-11 rounded-xl bg-white/95 backdrop-blur-xs flex items-center justify-center shadow-md">
-                          {service.icon}
-                        </div>
+                        <ServiceImageCarousel
+                          images={SERVICE_IMAGES[service.id] || []}
+                          title={service.title}
+                          aspectRatioClass="w-full h-full"
+                          priority={index === 0}
+                        >
+                          <div className="absolute top-4 left-4 h-11 w-11 rounded-xl bg-white/95 backdrop-blur-xs flex items-center justify-center shadow-md z-10 pointer-events-auto">
+                            {service.icon}
+                          </div>
+                        </ServiceImageCarousel>
                       </div>
                     </div>
 
@@ -302,7 +304,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Community Discovery Banner */}
-      <section className="py-20 bg-[#F3F7FC] border-t border-slate-200">
+      <section className="py-14 bg-[#F3F7FC] border-t border-slate-200">
         <div className="container mx-auto px-4 md:px-6 max-w-4xl text-center">
           <div className="h-12 w-12 rounded-2xl bg-[#0866C5]/10 flex items-center justify-center mx-auto mb-4 text-[#0866C5]">
             <ShieldCheck className="h-6 w-6" />

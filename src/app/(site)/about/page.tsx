@@ -38,7 +38,7 @@ export default function AboutPage() {
     <div className="flex flex-col w-full min-h-screen bg-white">
       
       {/* Hero Section */}
-      <section className="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden bg-gradient-to-b from-[#F3F7FC] via-white to-white border-b border-slate-100">
+      <section className="relative pt-28 pb-14 md:pt-36 md:pb-20 overflow-hidden bg-gradient-to-b from-[#F3F7FC] via-white to-white border-b border-slate-100">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0866C5]/10 text-[#0866C5] font-semibold text-xs uppercase tracking-wider mb-6">
@@ -56,7 +56,7 @@ export default function AboutPage() {
       </section>
 
       {/* Brand Narrative Section */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-14 md:py-20 bg-white">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
@@ -122,7 +122,7 @@ export default function AboutPage() {
       </section>
 
       {/* Core Values Section */}
-      <section className="py-20 md:py-24 bg-[#F3F7FC] border-y border-slate-100">
+      <section className="py-14 md:py-20 bg-[#F3F7FC] border-y border-slate-100">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <div className="text-xs font-bold tracking-widest uppercase text-[#0866C5] mb-2">

@@ -4,10 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, Phone, ArrowRight, MessageCircle } from "lucide-react";
+import { Menu, X, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
-import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -82,14 +81,6 @@ export function Navbar() {
 
           {/* Desktop Right CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <a
-              href={`tel:${siteConfig.contact.phone.replace(/\s+/g, '')}`}
-              className="flex items-center gap-2 text-xs font-semibold text-[#071B49] hover:text-[#0866C5] px-3 py-2 rounded-full hover:bg-[#F3F7FC] transition-colors"
-              aria-label={`Call ${siteConfig.contact.phone}`}
-            >
-              <Phone className="h-3.5 w-3.5 text-[#0866C5]" />
-              <span>{siteConfig.contact.phone}</span>
-            </a>
             <Link href="/communities">
               <Button
                 className="rounded-full bg-[#0866C5] hover:bg-[#0878E8] text-white shadow-sm hover:shadow-md px-5 h-10 font-semibold text-sm transition-all"
@@ -124,70 +115,59 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Navigation Dropdown */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="lg:hidden border-b border-slate-100 bg-white/98 backdrop-blur-xl shadow-xl overflow-hidden"
-          >
-            <div className="container mx-auto px-4 py-6 flex flex-col gap-3">
-              <nav className="flex flex-col gap-1">
-                {siteConfig.navLinks.map((link) => {
-                  const isActive = pathname === link.href;
-                  return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                        isActive
-                          ? "bg-[#F3F7FC] text-[#0866C5] font-semibold"
-                          : "text-[#071B49] hover:bg-slate-50"
-                      }`}
-                    >
-                      {link.title}
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              <div className="h-px bg-slate-100 my-2" />
-
-              <div className="flex flex-col gap-2.5 pt-1">
-                <Link href="/communities" onClick={() => setIsOpen(false)} className="w-full">
-                  <Button className="w-full h-12 rounded-xl bg-[#0866C5] hover:bg-[#0878E8] text-white font-semibold shadow-sm text-base">
-                    Find Your Community
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+      {/* Mobile Navigation Dropdown — pure CSS transition, no framer-motion */}
+      <div
+        className={`lg:hidden border-b border-slate-100 bg-white shadow-xl overflow-hidden transition-all duration-200 ease-in-out ${
+          isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+        aria-hidden={!isOpen}
+      >
+        <div className="container mx-auto px-4 py-6 flex flex-col gap-3">
+          <nav className="flex flex-col gap-1">
+            {siteConfig.navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                    isActive
+                      ? "bg-[#F3F7FC] text-[#0866C5] font-semibold"
+                      : "text-[#071B49] hover:bg-slate-50"
+                  }`}
+                >
+                  {link.title}
                 </Link>
-                <div className="grid grid-cols-2 gap-2">
-                  <a href={`tel:${siteConfig.contact.phone.replace(/\s+/g, '')}`} className="w-full">
-                    <Button variant="outline" className="w-full h-11 rounded-xl border-slate-200 text-xs font-semibold text-[#071B49]">
-                      <Phone className="mr-1.5 h-3.5 w-3.5 text-[#0866C5]" />
-                      Call Studio
-                    </Button>
-                  </a>
-                  <a
-                    href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hi%20SPYNN,%20I%20would%20like%20to%20know%20more%20about%20your%20services.`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    <Button variant="outline" className="w-full h-11 rounded-xl border-slate-200 text-xs font-semibold text-[#071B49]">
-                      <MessageCircle className="mr-1.5 h-3.5 w-3.5 text-[#25D366]" />
-                      WhatsApp
-                    </Button>
-                  </a>
-                </div>
-              </div>
+              );
+            })}
+          </nav>
+
+          <div className="h-px bg-slate-100 my-2" />
+
+          <div className="flex flex-col gap-2.5 pt-1">
+            <Link href="/communities" onClick={() => setIsOpen(false)} className="w-full">
+              <Button className="w-full h-12 rounded-xl bg-[#0866C5] hover:bg-[#0878E8] text-white font-semibold shadow-sm text-base">
+                Find Your Community
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <div className="flex flex-col gap-2">
+              <a
+                href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hi%20SPYNN,%20I%20would%20like%20to%20know%20more%20about%20your%20services.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                <Button variant="outline" className="w-full h-11 rounded-xl border-slate-200 text-xs font-semibold text-[#071B49]">
+                  <MessageCircle className="mr-1.5 h-3.5 w-3.5 text-[#25D366]" />
+                  WhatsApp Us
+                </Button>
+              </a>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      </div>
     </header>
   );
 }

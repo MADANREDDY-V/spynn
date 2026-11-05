@@ -97,7 +97,7 @@ export default function LocationsPage() {
       </section>
 
       {/* Locations List */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <div className="flex flex-col gap-12">
             {locationDetails.map((loc) => (

@@ -47,6 +47,7 @@ export const siteConfig = {
     { title: "About Us", href: "/about" },
     { title: "Communities", href: "/communities" },
     { title: "Locations", href: "/locations" },
+    { title: "Franchise", href: "/franchise" },
     { title: "Contact", href: "/contact" },
   ],
   social: {
