@@ -9,14 +9,26 @@ import { Button } from "@/components/ui/button";
 import { Download, RefreshCcw, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
+interface PickupRequest {
+  id: string;
+  booking_id: string;
+  full_name: string;
+  mobile_number: string;
+  landmark?: string;
+  tower?: string;
+  flat_number?: string;
+  pickup_date: string;
+  pickup_time: string;
+  status: string;
+}
+
 export default function AdminDashboard() {
-  const [requests, setRequests] = useState<any[]>([]);
+  const [requests, setRequests] = useState<PickupRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   const fetchRequests = async () => {
     setLoading(true);
-    // In a real app with RLS, we'd check if user is authenticated and is admin
     const { data, error } = await supabase
       .from('pickup_requests')
       .select('*')
@@ -31,7 +43,25 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchRequests();
+    let isMounted = true;
+    async function load() {
+      const { data, error } = await supabase
+        .from('pickup_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (!isMounted) return;
+      if (error) {
+        console.error("Error fetching requests:", error);
+      } else {
+        setRequests(data || []);
+      }
+      setLoading(false);
+    }
+    load();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const filteredRequests = requests.filter(req => 

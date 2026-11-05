@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,8 +52,9 @@ export function RequestCommunityModal({ trigger }: { trigger?: React.ReactNode }
       }
 
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred while submitting.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred while submitting.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -76,9 +78,13 @@ export function RequestCommunityModal({ trigger }: { trigger?: React.ReactNode }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || <Button>Request Your Community</Button>}
-      </DialogTrigger>
+      {React.isValidElement(trigger) ? (
+        <DialogTrigger render={trigger} />
+      ) : trigger ? (
+        <DialogTrigger>{trigger}</DialogTrigger>
+      ) : (
+        <DialogTrigger render={<Button>Request Your Community</Button>} />
+      )}
       <DialogContent className="sm:max-w-[500px] rounded-3xl p-0 overflow-hidden border-none shadow-2xl bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
         <AnimatePresence mode="wait">
           {!success ? (
@@ -172,7 +178,7 @@ export function RequestCommunityModal({ trigger }: { trigger?: React.ReactNode }
               </motion.div>
               <h3 className="text-3xl font-bold text-primary dark:text-white mb-4">Thank you!</h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-xs">
-                We've received your request. Our team will contact your apartment association shortly.
+                We&apos;ve received your request. Our team will contact your apartment association shortly.
               </p>
               <Button onClick={resetAndClose} variant="outline" className="h-12 px-8 rounded-full">
                 Close
