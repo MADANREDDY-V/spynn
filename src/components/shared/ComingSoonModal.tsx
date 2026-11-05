@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -24,15 +24,16 @@ export function ComingSoonModal({
   children, 
   title = "Online Booking Coming Soon", 
   description = "We're currently preparing our online booking platform. Until then, you can easily schedule your pickup through WhatsApp or by calling us directly.",
-  type = "booking"
 }: ComingSoonModalProps) {
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      {React.isValidElement(children) ? (
+        <DialogTrigger render={children} />
+      ) : (
+        <DialogTrigger>{children}</DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-md rounded-2xl bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 p-0 overflow-hidden shadow-2xl">
         <div className="bg-gradient-to-br from-primary via-blue-900 to-accent px-6 py-10 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]"></div>
