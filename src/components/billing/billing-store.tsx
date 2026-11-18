@@ -10,12 +10,14 @@ import {
   subscribeBillingStore,
 } from "@/lib/billing/storage";
 import {
+  deleteOrderFromSupabase,
   syncCustomerToSupabase,
   syncGarmentPriceToSupabase,
   syncOrderStatusToSupabase,
   syncOrderToSupabase,
   syncPaymentToSupabase,
 } from "@/lib/billing/supabase-billing";
+import { getSessionUser } from "@/lib/billing/auth";
 import type { BillingStoreData, Customer, Garment, Order, OrderStatus } from "@/lib/billing/types";
 
 type OrderInput = Omit<Order, "id" | "orderNumber" | "createdAt" | "updatedAt"> &
@@ -27,6 +29,7 @@ type BillingContextValue = BillingStoreData & {
   addGarment: (input: Omit<Garment, "id">) => Garment;
   saveCustomer: (input: Omit<Customer, "id" | "createdAt"> & { id?: string }) => Customer;
   saveOrder: (input: OrderInput) => Order;
+  deleteOrder: (orderId: string) => Promise<{ success: boolean; error?: string }>;
   updateOrderStatus: (orderId: string, orderStatus: OrderStatus) => void;
   recordPayment: (
     orderId: string,
@@ -121,6 +124,34 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
     return order;
   }, []);
 
+  const deleteOrder = useCallback(
+    async (orderId: string): Promise<{ success: boolean; error?: string }> => {
+      const current = loadBillingStore();
+      const target = current.orders.find((item) => item.id === orderId);
+      if (!target) {
+        return { success: false, error: "Order not found" };
+      }
+
+      const sessionUser = getSessionUser();
+      const performedBy = sessionUser?.email || sessionUser?.name || "staff";
+
+      // 1. Delete from Supabase
+      const res = await deleteOrderFromSupabase(target.orderNumber, target.id, performedBy);
+      if (!res.success) {
+        return { success: false, error: res.error || "Failed to delete order from database" };
+      }
+
+      // 2. Remove order from local store
+      writeStore((prev) => ({
+        ...prev,
+        orders: prev.orders.filter((item) => item.id !== orderId),
+      }));
+
+      return { success: true };
+    },
+    []
+  );
+
   const updateOrderStatus = useCallback((orderId: string, orderStatus: OrderStatus) => {
     const current = loadBillingStore();
     const targetOrder = current.orders.find((o) => o.id === orderId);
@@ -178,11 +209,12 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
       addGarment,
       saveCustomer,
       saveOrder,
+      deleteOrder,
       updateOrderStatus,
       recordPayment,
       resetSampleData,
     }),
-    [data, ready, upsertGarment, addGarment, saveCustomer, saveOrder, updateOrderStatus, recordPayment, resetSampleData],
+    [data, ready, upsertGarment, addGarment, saveCustomer, saveOrder, deleteOrder, updateOrderStatus, recordPayment, resetSampleData],
   );
 
   return <BillingContext.Provider value={value}>{children}</BillingContext.Provider>;

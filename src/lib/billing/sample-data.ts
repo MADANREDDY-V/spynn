@@ -287,52 +287,7 @@ export const SAMPLE_CUSTOMERS: Customer[] = [
   },
 ];
 
-export const SAMPLE_ORDERS: Order[] = [
-  {
-    id: "o-1",
-    orderNumber: "SPYNN-0001",
-    customerId: "c-1",
-    customer: {
-      name: "Ananya Reddy",
-      mobile: "9876543210",
-      address: "Flat 12B, Tower 3, My Home Bhooja, Hyderabad",
-    },
-    items: [
-      { id: "l-1", garmentId: "dc-uw-3", garmentName: "Shirt", illustration: "shirt", service: "Dry Cleaning", quantity: 3, unitPrice: 100, unit: "item" },
-      { id: "l-2", garmentId: "dc-bw-1", garmentName: "Pant / Trousers", illustration: "trouser", service: "Dry Cleaning", quantity: 2, unitPrice: 100, unit: "item" },
-    ],
-    notes: "",
-    discount: 20,
-    discountPercent: 4,
-    amountPaid: 0,
-    paymentMethod: "Online",
-    orderStatus: "Processing",
-    createdAt: "2026-10-10T10:20:00.000Z",
-    updatedAt: "2026-10-11T14:00:00.000Z",
-  },
-  {
-    id: "o-2",
-    orderNumber: "SPYNN-0002",
-    customerId: "c-2",
-    customer: {
-      name: "Rahul Sharma",
-      mobile: "9848012345",
-      address: "Villa 8, Prestige Lakeside, Hyderabad",
-    },
-    items: [
-      { id: "l-3", garmentId: "dc-fb-4", garmentName: "Gents Suit (2 Pcs)", illustration: "suit", service: "Dry Cleaning", quantity: 1, unitPrice: 350, unit: "item" },
-      { id: "l-4", garmentId: "dc-fb-11", garmentName: "Saree", variant: "Plain", illustration: "saree", service: "Dry Cleaning", quantity: 1, unitPrice: 150, unit: "item" },
-    ],
-    notes: "",
-    discount: 0,
-    discountPercent: 0,
-    amountPaid: 500,
-    paymentMethod: "Cash",
-    orderStatus: "Delivered",
-    createdAt: "2026-10-12T16:40:00.000Z",
-    updatedAt: "2026-10-13T09:10:00.000Z",
-  },
-];
+export const SAMPLE_ORDERS: Order[] = [];
 
 export const DEFAULT_STORE: BillingStoreData = {
   garments: SAMPLE_GARMENTS,

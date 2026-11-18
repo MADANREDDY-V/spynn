@@ -216,3 +216,192 @@ export async function syncGarmentPriceToSupabase(
     return { success: false, error: err instanceof Error ? err.message : "Error saving price" };
   }
 }
+
+/**
+ * Permanently deletes an order and its associated line items from Supabase.
+ *
+ * SECURE RPC-ONLY IMPLEMENTATION:
+ * Calls exclusively the atomic database function:
+ *   public.delete_billing_order_by_number(p_order_number, p_performed_by)
+ *
+ * Security & Integrity Guarantees:
+ *   - Verifies the caller's server-side JWT session via auth.uid().
+ *   - Restricts deletion to authenticated staff with is_active = true and role = 'owner' in public.billing_staff.
+ *   - Deletes order items and the order atomically within a single database transaction.
+ *   - Records audit log entry in the same transaction using authoritative user identity.
+ *   - Strictly RPC-only: never performs direct table deletion from client code.
+ *   - Never falls back to client-side table deletes or client-side audit inserts.
+ *   - Returns success only when the RPC explicitly returns { success: true }.
+ */
+export async function deleteOrderFromSupabase(
+  orderNumber: string,
+  _orderId?: string,
+  performedBy?: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    // Supabase not configured – local-only prototype mode; allow local deletion.
+    return { success: true };
+  }
+
+  try {
+    const { data: rpcData, error: rpcErr } = await supabase.rpc(
+      "delete_billing_order_by_number",
+      {
+        p_order_number: orderNumber,
+        p_performed_by: performedBy ?? "staff",
+      }
+    );
+
+    // 1. If RPC call itself failed (network issue, function missing, unauthenticated/unauthorized rejection)
+    if (rpcErr) {
+      return {
+        success: false,
+        error: rpcErr.message || "Failed to execute order deletion on the database.",
+      };
+    }
+
+    // 2. Validate response structure from the stored procedure
+    if (rpcData !== null && typeof rpcData === "object") {
+      const result = rpcData as { success?: boolean; error?: string };
+
+      if (result.success === true) {
+        return { success: true };
+      }
+
+      if (result.success === false) {
+        return {
+          success: false,
+          error: result.error ?? "Order deletion was rejected by the database.",
+        };
+      }
+    }
+
+    // 3. If response was missing or unexpected format, treat as failure
+    return {
+      success: false,
+      error: "Unexpected response from database during order deletion.",
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Database error while deleting order",
+    };
+  }
+}
+
+/**
+ * Fetches all orders from Supabase with their associated order items.
+ */
+export async function fetchOrdersFromSupabase(): Promise<{
+  success: boolean;
+  orders?: Order[];
+  error?: string;
+}> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: "Supabase not configured" };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("billing_orders")
+      .select(`
+        id,
+        order_number,
+        customer_id,
+        customer_name,
+        customer_mobile,
+        customer_address,
+        subtotal,
+        discount_percent,
+        discount_amount,
+        total,
+        amount_paid,
+        balance,
+        payment_method,
+        cash_amount,
+        online_amount,
+        order_status,
+        payment_status,
+        notes,
+        created_at,
+        updated_at,
+        billing_order_items (
+          id,
+          garment_name,
+          service,
+          category,
+          variant,
+          quantity,
+          unit_price,
+          unit,
+          line_total
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    if (!data) {
+      return { success: true, orders: [] };
+    }
+
+    type DbItem = {
+      id: string;
+      garment_name: string;
+      service: string;
+      category?: string | null;
+      variant?: string | null;
+      quantity: number;
+      unit_price: number;
+      unit?: string | null;
+      line_total?: number;
+    };
+
+    const orders: Order[] = data.map((row) => {
+      const itemsRaw = (row.billing_order_items as unknown as DbItem[]) || [];
+      const items = itemsRaw.map((item) => ({
+        id: item.id,
+        garmentId: item.id,
+        garmentName: item.garment_name,
+        variant: item.variant || undefined,
+        illustration: "shirt" as const,
+        service: item.service as import("./types").Service,
+        quantity: Number(item.quantity) || 1,
+        unitPrice: Number(item.unit_price) || 0,
+        unit: (item.unit || "item") as import("./types").GarmentUnit,
+      }));
+
+      return {
+        id: row.id,
+        orderNumber: row.order_number,
+        customerId: row.customer_id,
+        customer: {
+          name: row.customer_name || "Walk-in Customer",
+          mobile: row.customer_mobile || "",
+          address: row.customer_address || "",
+        },
+        items,
+        notes: row.notes || "",
+        discount: Number(row.discount_amount) || 0,
+        discountPercent: Number(row.discount_percent) || 0,
+        taxPercent: 0,
+        amountPaid: Number(row.amount_paid) || 0,
+        paymentMethod: (row.payment_method || "Cash") as import("./types").PaymentMethod,
+        cashAmount: row.cash_amount != null ? Number(row.cash_amount) : undefined,
+        onlineAmount: row.online_amount != null ? Number(row.online_amount) : undefined,
+        orderStatus: (row.order_status || "Received") as import("./types").OrderStatus,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+      };
+    });
+
+    return { success: true, orders };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Error fetching orders from Supabase",
+    };
+  }
+}

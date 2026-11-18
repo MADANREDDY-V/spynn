@@ -297,3 +297,62 @@ export function subscribeAuthChange(listener: () => void): () => void {
     }
   };
 }
+
+
+// ---------------------------------------------------------------------------
+// Password recovery
+// ---------------------------------------------------------------------------
+
+/** Sends a password-reset email using Supabase Auth. */
+export async function requestPasswordReset(
+  email: string
+): Promise<string | null> {
+  if (!email.trim()) return "Email is required.";
+
+  if (!isSupabaseConfigured()) {
+    return "Supabase authentication is not configured.";
+  }
+
+  try {
+    const redirectTo = `${window.location.origin}/billing/update-password`;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      email.trim().toLowerCase(),
+      { redirectTo }
+    );
+
+    if (error) return error.message;
+
+    return null;
+  } catch (err) {
+    return err instanceof Error
+      ? err.message
+      : "Unable to send password reset email.";
+  }
+}
+
+/** Updates the password for the authenticated recovery session. */
+export async function updateUserPassword(
+  newPassword: string
+): Promise<string | null> {
+  if (!newPassword) return "New password is required.";
+
+  if (!isSupabaseConfigured()) {
+    return "Supabase authentication is not configured.";
+  }
+
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) return error.message;
+
+    return null;
+  } catch (err) {
+    return err instanceof Error
+      ? err.message
+      : "Unable to update password.";
+  }
+}
+
