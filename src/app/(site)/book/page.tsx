@@ -124,7 +124,7 @@ export default function BookPickupPage() {
         <Card className="border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl overflow-hidden bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
           <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 pb-8 pt-8 px-6 md:px-10">
             <CardTitle className="text-2xl">Pickup Details</CardTitle>
-            <CardDescription>Fill out the form below and we'll take care of the rest.</CardDescription>
+            <CardDescription>Fill out the form below and we&apos;ll take care of the rest.</CardDescription>
           </CardHeader>
           <CardContent className="p-6 md:p-10">
             <form onSubmit={handleSubmit} className="space-y-8">

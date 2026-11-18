@@ -4,71 +4,104 @@
     "slug": "gardenia-florence-villas",
     "name": "Gardenia Florence Villas",
     "location": "Tellapur",
-    "coordinates": { "lat": 17.464, "lng": 78.291 },
-    "image": "/images/communities/gardenia.jpg",
+    "assignedStore": "Narsingi Studio",
+    "phone": "+91 98666 35661",
+    "whatsapp": "919866635661",
+    "storeAddress": "Main Road, Narsingi, Hyderabad",
+    "isActive": true,
     "status": "Currently Serving",
     "services": [
       "Dry Cleaning",
       "Steam Ironing",
+      "Wash & Fold",
       "Shoe Cleaning",
       "Curtain Cleaning",
-      "Sofa Cleaning",
-      "Carpet Cleaning"
+      "Household Item Cleaning"
     ],
-    "estimatedPickup": "Same Day"
+    "estimatedPickup": "Same Day Collection"
   },
   {
     "id": "c2",
     "slug": "hallmark-skyrena",
     "name": "Hallmark Skyrena",
     "location": "Puppalaguda",
-    "coordinates": { "lat": 17.398, "lng": 78.373 },
-    "image": "/images/communities/skyrena.jpg",
+    "assignedStore": "Narsingi Studio",
+    "phone": "+91 98666 35661",
+    "whatsapp": "919866635661",
+    "storeAddress": "Main Road, Narsingi, Hyderabad",
+    "isActive": true,
     "status": "Currently Serving",
     "services": [
       "Dry Cleaning",
       "Steam Ironing",
+      "Wash & Fold",
       "Shoe Cleaning",
       "Curtain Cleaning",
-      "Sofa Cleaning",
-      "Carpet Cleaning"
+      "Household Item Cleaning"
     ],
-    "estimatedPickup": "Same Day"
+    "estimatedPickup": "Same Day Collection"
   },
   {
     "id": "c3",
     "slug": "hallmark-treasor",
     "name": "Hallmark Treasor",
     "location": "Alkapur Township",
-    "coordinates": { "lat": 17.387, "lng": 78.384 },
-    "image": "/images/communities/treasor.jpg",
+    "assignedStore": "Narsingi Studio",
+    "phone": "+91 98666 35661",
+    "whatsapp": "919866635661",
+    "storeAddress": "Main Road, Narsingi, Hyderabad",
+    "isActive": true,
     "status": "Currently Serving",
     "services": [
       "Dry Cleaning",
       "Steam Ironing",
+      "Wash & Fold",
       "Shoe Cleaning",
       "Curtain Cleaning",
-      "Sofa Cleaning",
-      "Carpet Cleaning"
+      "Household Item Cleaning"
     ],
-    "estimatedPickup": "Same Day"
+    "estimatedPickup": "Same Day Collection"
   },
   {
     "id": "c4",
     "slug": "vessella-meadows",
     "name": "Vessella Meadows",
     "location": "Narsingi",
-    "coordinates": { "lat": 17.385, "lng": 78.369 },
-    "image": "/images/communities/vessella.jpg",
+    "assignedStore": "Narsingi Studio",
+    "phone": "+91 98666 35661",
+    "whatsapp": "919866635661",
+    "storeAddress": "Main Road, Narsingi, Hyderabad",
+    "isActive": true,
     "status": "Currently Serving",
     "services": [
       "Dry Cleaning",
       "Steam Ironing",
+      "Wash & Fold",
       "Shoe Cleaning",
       "Curtain Cleaning",
-      "Sofa Cleaning",
-      "Carpet Cleaning"
+      "Household Item Cleaning"
     ],
-    "estimatedPickup": "Same Day"
+    "estimatedPickup": "Same Day Collection"
+  },
+  {
+    "id": "c5",
+    "slug": "girija-marvel-chandanagar",
+    "name": "Girija Marvel — Chandanagar",
+    "location": "Chandanagar",
+    "assignedStore": "Chandanagar Studio",
+    "phone": "+91 98666 35661",
+    "whatsapp": "919866635661",
+    "storeAddress": "Chandanagar Main Road, Hyderabad",
+    "isActive": true,
+    "status": "Currently Serving",
+    "services": [
+      "Dry Cleaning",
+      "Steam Ironing",
+      "Wash & Fold",
+      "Shoe Cleaning",
+      "Curtain Cleaning",
+      "Household Item Cleaning"
+    ],
+    "estimatedPickup": "Same Day Collection"
   }
 ]
