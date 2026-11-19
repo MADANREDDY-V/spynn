@@ -90,11 +90,8 @@ function isPredefinedSampleOrder(order: Order): boolean {
     "SPYNN-0001-A", "SPYNN-0001-B",
     "SPYNN-0002-A", "SPYNN-0002-B",
     "SPYNN-0003-A", "SPYNN-0003-B",
-    "SPYNN-0003",   // legacy local-only copy before suffix was added
     "SPYNN-0004-A", "SPYNN-0004-B",
-    "SPYNN-0004",   // legacy local-only copy
     "SPYNN-0005-A", "SPYNN-0005-B",
-    "SPYNN-0005",   // legacy local-only copy
     "SPYNN-0006-A", "SPYNN-0006-B",
   ]);
   return testOrderNumbers.has(order.orderNumber);
