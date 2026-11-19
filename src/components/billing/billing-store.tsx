@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { newId, nextOrderNumber } from "@/lib/billing/calculations";
 import {
   clearBillingStore,
@@ -11,20 +11,25 @@ import {
 } from "@/lib/billing/storage";
 import {
   deleteOrderFromSupabase,
+  fetchBillingStoreFromSupabase,
   syncCustomerToSupabase,
   syncGarmentPriceToSupabase,
   syncOrderStatusToSupabase,
   syncOrderToSupabase,
   syncPaymentToSupabase,
 } from "@/lib/billing/supabase-billing";
-import { getSessionUser } from "@/lib/billing/auth";
-import type { BillingStoreData, Customer, Garment, Order, OrderStatus } from "@/lib/billing/types";
+import { getSessionUser, subscribeAuthChange } from "@/lib/billing/auth";
+import { isSupabaseConfigured } from "@/lib/supabase";
+import type { BillingStoreData, Customer, Garment, Order, OrderStatus, PaymentMethod } from "@/lib/billing/types";
 
 type OrderInput = Omit<Order, "id" | "orderNumber" | "createdAt" | "updatedAt"> &
   Partial<Pick<Order, "id" | "orderNumber" | "createdAt">>;
 
 type BillingContextValue = BillingStoreData & {
   ready: boolean;
+  isLoading: boolean;
+  error: string | null;
+  refreshFromSupabase: () => Promise<void>;
   upsertGarment: (garment: Garment) => void;
   addGarment: (input: Omit<Garment, "id">) => Garment;
   saveCustomer: (input: Omit<Customer, "id" | "createdAt"> & { id?: string }) => Customer;
@@ -34,7 +39,7 @@ type BillingContextValue = BillingStoreData & {
   recordPayment: (
     orderId: string,
     amountPaid: number,
-    paymentMethod?: import("@/lib/billing/types").PaymentMethod,
+    paymentMethod?: PaymentMethod,
     splitDetails?: { cashAmount?: number; onlineAmount?: number }
   ) => void;
   resetSampleData: () => void;
@@ -48,11 +53,42 @@ function writeStore(updater: (current: BillingStoreData) => BillingStoreData) {
 
 export function BillingProvider({ children }: { children: React.ReactNode }) {
   const data = useSyncExternalStore(subscribeBillingStore, loadBillingStore, getBillingServerSnapshot);
-  const ready = useSyncExternalStore(
-    subscribeBillingStore,
-    () => true,
-    () => false,
-  );
+  const [isLoading, setIsLoading] = useState(isSupabaseConfigured());
+  const [error, setError] = useState<string | null>(null);
+
+  const loadFromSupabase = useCallback(async () => {
+    if (!isSupabaseConfigured()) {
+      setIsLoading(false);
+      return;
+    }
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await fetchBillingStoreFromSupabase();
+      if (res.success && res.store) {
+        saveBillingStore(res.store);
+      } else if (res.error) {
+        console.warn("Failed to load billing data from Supabase:", res.error);
+        setError(res.error);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to load data from Supabase";
+      console.warn("Error loading from Supabase:", msg);
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadFromSupabase();
+
+    // Re-fetch when auth state changes (login / switch user)
+    const unsub = subscribeAuthChange(() => {
+      void loadFromSupabase();
+    });
+    return unsub;
+  }, [loadFromSupabase]);
 
   const upsertGarment = useCallback((garment: Garment) => {
     writeStore((current) => ({
@@ -153,39 +189,43 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
   );
 
   const updateOrderStatus = useCallback((orderId: string, orderStatus: OrderStatus) => {
-    const current = loadBillingStore();
-    const targetOrder = current.orders.find((o) => o.id === orderId);
-    if (targetOrder) {
-      void syncOrderStatusToSupabase(targetOrder.orderNumber, orderStatus);
-    }
-    writeStore((prev) => ({
-      ...prev,
-      orders: prev.orders.map((order) =>
-        order.id === orderId ? { ...order, orderStatus, updatedAt: new Date().toISOString() } : order,
-      ),
+    let targetOrderNumber: string | null = null;
+    writeStore((current) => ({
+      ...current,
+      orders: current.orders.map((order) => {
+        if (order.id === orderId) {
+          targetOrderNumber = order.orderNumber;
+          return { ...order, orderStatus, updatedAt: new Date().toISOString() };
+        }
+        return order;
+      }),
     }));
+    if (targetOrderNumber) {
+      void syncOrderStatusToSupabase(targetOrderNumber, orderStatus);
+    }
   }, []);
 
   const recordPayment = useCallback(
     (
       orderId: string,
       amountPaid: number,
-      paymentMethod: import("@/lib/billing/types").PaymentMethod = "Cash",
+      paymentMethod?: PaymentMethod,
       splitDetails?: { cashAmount?: number; onlineAmount?: number }
     ) => {
       const current = loadBillingStore();
-      const targetOrder = current.orders.find((o) => o.id === orderId);
-      if (targetOrder) {
-        void syncPaymentToSupabase(targetOrder.orderNumber, amountPaid, paymentMethod, splitDetails);
+      const target = current.orders.find((o) => o.id === orderId);
+      if (target) {
+        void syncPaymentToSupabase(target.orderNumber, amountPaid, paymentMethod || "Cash", splitDetails);
       }
-      writeStore((prev) => ({
-        ...prev,
-        orders: prev.orders.map((order) =>
+
+      writeStore((curr) => ({
+        ...curr,
+        orders: curr.orders.map((order) =>
           order.id === orderId
             ? {
                 ...order,
                 amountPaid,
-                paymentMethod,
+                paymentMethod: paymentMethod || order.paymentMethod,
                 cashAmount: splitDetails?.cashAmount ?? (paymentMethod === "Cash" ? amountPaid : 0),
                 onlineAmount: splitDetails?.onlineAmount ?? (paymentMethod === "Online" ? amountPaid : 0),
                 updatedAt: new Date().toISOString(),
@@ -204,7 +244,10 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<BillingContextValue>(
     () => ({
       ...data,
-      ready,
+      ready: !isLoading,
+      isLoading,
+      error,
+      refreshFromSupabase: loadFromSupabase,
       upsertGarment,
       addGarment,
       saveCustomer,
@@ -214,7 +257,20 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
       recordPayment,
       resetSampleData,
     }),
-    [data, ready, upsertGarment, addGarment, saveCustomer, saveOrder, deleteOrder, updateOrderStatus, recordPayment, resetSampleData],
+    [
+      data,
+      isLoading,
+      error,
+      loadFromSupabase,
+      upsertGarment,
+      addGarment,
+      saveCustomer,
+      saveOrder,
+      deleteOrder,
+      updateOrderStatus,
+      recordPayment,
+      resetSampleData,
+    ]
   );
 
   return <BillingContext.Provider value={value}>{children}</BillingContext.Provider>;

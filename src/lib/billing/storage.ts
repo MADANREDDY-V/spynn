@@ -1,6 +1,7 @@
 import { DEFAULT_STORE, SAMPLE_GARMENTS } from "./sample-data";
 import type { BillingStoreData, Customer, DraftBill, Garment, Order, Service } from "./types";
 import { userStoragePrefix } from "./auth";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 // Legacy / backward-compat constants (kept for external consumers)
 export const BILLING_STORAGE_KEY = "spynn-billing-store-v2";
@@ -67,7 +68,12 @@ function mergeGarments(stored: Garment[]): Garment[] {
 }
 
 export function emptyBillingStore(): BillingStoreData {
-  return structuredClone(DEFAULT_STORE);
+  const store = structuredClone(DEFAULT_STORE);
+  if (typeof window !== "undefined" && isSupabaseConfigured()) {
+    store.customers = [];
+    store.orders = [];
+  }
+  return store;
 }
 
 /**

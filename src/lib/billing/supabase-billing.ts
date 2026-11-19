@@ -1,35 +1,83 @@
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import type { Customer, Garment, Order, OrderStatus, PaymentMethod } from "./types";
+import type {
+  BillingStoreData,
+  Customer,
+  CustomerSnapshot,
+  Garment,
+  GarmentUnit,
+  Order,
+  OrderStatus,
+  PaymentMethod,
+  Service,
+} from "./types";
 import { orderTotals } from "./calculations";
+import { SAMPLE_GARMENTS } from "./sample-data";
+
+/**
+ * Verified production store UUID for SPYNN Chandanagar owned by vennapusamadankumarreddy@gmail.com
+ */
+export const SPYNN_STORE_ID = "dd83fb7a-938e-44ce-9de5-fbb2fbb057c3";
+
+let cachedStoreId: string | null = null;
+
+/**
+ * Resolves the active store_id for billing operations.
+ * Defaults to the verified production store ID.
+ */
+export async function getStoreId(): Promise<string> {
+  if (cachedStoreId) return cachedStoreId;
+  if (!isSupabaseConfigured()) return SPYNN_STORE_ID;
+
+  try {
+    const { data } = await supabase
+      .from("billing_stores")
+      .select("id")
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
+    if (data?.id) {
+      cachedStoreId = data.id;
+      return data.id;
+    }
+  } catch {
+    // Fall back to known production store ID
+  }
+  return SPYNN_STORE_ID;
+}
 
 /**
  * Service for syncing SPYNN billing data with Supabase PostgreSQL database.
- * Matches schemas defined in database.sql.
  */
-
 export async function syncOrderToSupabase(
   order: Order
 ): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured()) {
     return {
       success: false,
-      error: "Supabase not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local",
+      error: "Supabase not configured.",
     };
   }
 
   try {
+    const storeId = await getStoreId();
     const totals = orderTotals(order);
 
-    // 1. Upsert customer snapshot
+    // 1. Upsert customer snapshot into billing_customers
     let customerId = order.customerId;
-    if (order.customer && order.customer.mobile) {
+    const custMobile = order.customer?.mobile ? order.customer.mobile.trim() : "";
+    const custName = order.customer?.name ? order.customer.name.trim() : "Walk-in Customer";
+    const custAddress = order.customer?.address ? order.customer.address.trim() : null;
+
+    if (custMobile) {
       const { data: custData, error: custErr } = await supabase
         .from("billing_customers")
         .upsert(
           {
-            name: order.customer.name || "Walk-in Customer",
-            mobile: order.customer.mobile,
-            address: order.customer.address || null,
+            store_id: storeId,
+            full_name: custName,
+            mobile: custMobile,
+            address: custAddress,
             updated_at: new Date().toISOString(),
           },
           { onConflict: "mobile" }
@@ -42,28 +90,31 @@ export async function syncOrderToSupabase(
       }
     }
 
-    // 2. Upsert billing order
+    // 2. Upsert billing order matching production schema
     const { data: orderData, error: orderErr } = await supabase
       .from("billing_orders")
       .upsert(
         {
+          store_id: storeId,
           order_number: order.orderNumber,
           customer_id: customerId,
-          customer_name: order.customer.name || "Walk-in Customer",
-          customer_mobile: order.customer.mobile || "",
-          customer_address: order.customer.address || null,
+          source_customer_snapshot: {
+            name: custName,
+            mobile: custMobile,
+            address: custAddress,
+          },
           subtotal: totals.subtotal,
+          discount: totals.discountAmount,
           discount_percent: totals.discountPercent,
-          discount_amount: totals.discountAmount,
+          tax_percent: order.taxPercent ?? 0,
           total: totals.total,
           amount_paid: totals.amountPaid,
           balance: totals.balance,
           payment_method: order.paymentMethod || "Cash",
-          cash_amount: order.cashAmount ?? null,
-          online_amount: order.onlineAmount ?? null,
           order_status: order.orderStatus,
           payment_status: totals.paymentStatus,
           notes: order.notes || null,
+          created_at: order.createdAt,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "order_number" }
@@ -81,6 +132,7 @@ export async function syncOrderToSupabase(
       await supabase.from("billing_order_items").delete().eq("order_id", orderData.id);
 
       const itemsToInsert = order.items.map((item) => ({
+        store_id: storeId,
         order_id: orderData.id,
         garment_name: item.garmentName,
         service: item.service,
@@ -112,9 +164,11 @@ export async function syncCustomerToSupabase(
   }
 
   try {
+    const storeId = await getStoreId();
     const { error } = await supabase.from("billing_customers").upsert(
       {
-        name: customer.name,
+        store_id: storeId,
+        full_name: customer.name,
         mobile: customer.mobile,
         address: customer.address || null,
         updated_at: new Date().toISOString(),
@@ -152,7 +206,7 @@ export async function syncPaymentToSupabase(
   orderNumber: string,
   amountPaid: number,
   paymentMethod: PaymentMethod = "Cash",
-  split?: { cashAmount?: number; onlineAmount?: number }
+  _split?: { cashAmount?: number; onlineAmount?: number }
 ): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured()) return { success: false };
 
@@ -176,8 +230,6 @@ export async function syncPaymentToSupabase(
         balance,
         payment_status: paymentStatus,
         payment_method: paymentMethod,
-        cash_amount: split?.cashAmount ?? null,
-        online_amount: split?.onlineAmount ?? null,
         updated_at: new Date().toISOString(),
       })
       .eq("order_number", orderNumber);
@@ -219,19 +271,6 @@ export async function syncGarmentPriceToSupabase(
 
 /**
  * Permanently deletes an order and its associated line items from Supabase.
- *
- * SECURE RPC-ONLY IMPLEMENTATION:
- * Calls exclusively the atomic database function:
- *   public.delete_billing_order_by_number(p_order_number, p_performed_by)
- *
- * Security & Integrity Guarantees:
- *   - Verifies the caller's server-side JWT session via auth.uid().
- *   - Restricts deletion to authenticated staff with is_active = true and role = 'owner' in public.billing_staff.
- *   - Deletes order items and the order atomically within a single database transaction.
- *   - Records audit log entry in the same transaction using authoritative user identity.
- *   - Strictly RPC-only: never performs direct table deletion from client code.
- *   - Never falls back to client-side table deletes or client-side audit inserts.
- *   - Returns success only when the RPC explicitly returns { success: true }.
  */
 export async function deleteOrderFromSupabase(
   orderNumber: string,
@@ -239,7 +278,6 @@ export async function deleteOrderFromSupabase(
   performedBy?: string
 ): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured()) {
-    // Supabase not configured – local-only prototype mode; allow local deletion.
     return { success: true };
   }
 
@@ -252,7 +290,6 @@ export async function deleteOrderFromSupabase(
       }
     );
 
-    // 1. If RPC call itself failed (network issue, function missing, unauthenticated/unauthorized rejection)
     if (rpcErr) {
       return {
         success: false,
@@ -260,14 +297,9 @@ export async function deleteOrderFromSupabase(
       };
     }
 
-    // 2. Validate response structure from the stored procedure
     if (rpcData !== null && typeof rpcData === "object") {
       const result = rpcData as { success?: boolean; error?: string };
-
-      if (result.success === true) {
-        return { success: true };
-      }
-
+      if (result.success === true) return { success: true };
       if (result.success === false) {
         return {
           success: false,
@@ -276,7 +308,6 @@ export async function deleteOrderFromSupabase(
       }
     }
 
-    // 3. If response was missing or unexpected format, treat as failure
     return {
       success: false,
       error: "Unexpected response from database during order deletion.",
@@ -290,9 +321,51 @@ export async function deleteOrderFromSupabase(
 }
 
 /**
- * Fetches all orders from Supabase with their associated order items.
+ * Fetches all customers for the specified store from Supabase.
  */
-export async function fetchOrdersFromSupabase(): Promise<{
+export async function fetchCustomersFromSupabase(
+  storeId?: string
+): Promise<{ success: boolean; customers?: Customer[]; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: "Supabase not configured" };
+  }
+
+  try {
+    const targetStoreId = storeId || (await getStoreId());
+    const { data, error } = await supabase
+      .from("billing_customers")
+      .select("id, store_id, full_name, mobile, address, created_at, updated_at")
+      .eq("store_id", targetStoreId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    const customers: Customer[] = (data || []).map((row) => ({
+      id: row.id,
+      name: row.full_name || "Walk-in Customer",
+      mobile: row.mobile || "",
+      address: row.address || "",
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    }));
+
+    return { success: true, customers };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Error fetching customers from Supabase",
+    };
+  }
+}
+
+/**
+ * Fetches all orders with line items and customer snapshots from Supabase.
+ */
+export async function fetchOrdersFromSupabase(
+  storeId?: string
+): Promise<{
   success: boolean;
   orders?: Order[];
   error?: string;
@@ -302,31 +375,37 @@ export async function fetchOrdersFromSupabase(): Promise<{
   }
 
   try {
+    const targetStoreId = storeId || (await getStoreId());
     const { data, error } = await supabase
       .from("billing_orders")
       .select(`
         id,
         order_number,
         customer_id,
-        customer_name,
-        customer_mobile,
-        customer_address,
+        store_id,
+        source_customer_snapshot,
         subtotal,
+        discount,
         discount_percent,
-        discount_amount,
+        tax_percent,
         total,
         amount_paid,
         balance,
         payment_method,
-        cash_amount,
-        online_amount,
         order_status,
         payment_status,
         notes,
         created_at,
         updated_at,
+        billing_customers (
+          id,
+          full_name,
+          mobile,
+          address
+        ),
         billing_order_items (
           id,
+          source_item_id,
           garment_name,
           service,
           category,
@@ -337,6 +416,7 @@ export async function fetchOrdersFromSupabase(): Promise<{
           line_total
         )
       `)
+      .eq("store_id", targetStoreId)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -347,8 +427,16 @@ export async function fetchOrdersFromSupabase(): Promise<{
       return { success: true, orders: [] };
     }
 
+    type DbCustomer = {
+      id: string;
+      full_name: string;
+      mobile: string;
+      address?: string | null;
+    };
+
     type DbItem = {
       id: string;
+      source_item_id?: string | null;
       garment_name: string;
       service: string;
       category?: string | null;
@@ -360,38 +448,41 @@ export async function fetchOrdersFromSupabase(): Promise<{
     };
 
     const orders: Order[] = data.map((row) => {
+      const custRaw = row.billing_customers as unknown as DbCustomer | null;
+      const snap = (row.source_customer_snapshot as { name?: string; mobile?: string; address?: string }) || {};
+
+      const customer: CustomerSnapshot = {
+        name: custRaw?.full_name || snap.name || "Walk-in Customer",
+        mobile: custRaw?.mobile || snap.mobile || "",
+        address: custRaw?.address || snap.address || "",
+      };
+
       const itemsRaw = (row.billing_order_items as unknown as DbItem[]) || [];
       const items = itemsRaw.map((item) => ({
         id: item.id,
-        garmentId: item.id,
+        garmentId: item.source_item_id || item.id,
         garmentName: item.garment_name,
         variant: item.variant || undefined,
         illustration: "shirt" as const,
-        service: item.service as import("./types").Service,
+        service: item.service as Service,
         quantity: Number(item.quantity) || 1,
         unitPrice: Number(item.unit_price) || 0,
-        unit: (item.unit || "item") as import("./types").GarmentUnit,
+        unit: (item.unit || "item") as GarmentUnit,
       }));
 
       return {
         id: row.id,
         orderNumber: row.order_number,
         customerId: row.customer_id,
-        customer: {
-          name: row.customer_name || "Walk-in Customer",
-          mobile: row.customer_mobile || "",
-          address: row.customer_address || "",
-        },
+        customer,
         items,
         notes: row.notes || "",
-        discount: Number(row.discount_amount) || 0,
+        discount: Number(row.discount) || 0,
         discountPercent: Number(row.discount_percent) || 0,
-        taxPercent: 0,
+        taxPercent: Number(row.tax_percent) || 0,
         amountPaid: Number(row.amount_paid) || 0,
-        paymentMethod: (row.payment_method || "Cash") as import("./types").PaymentMethod,
-        cashAmount: row.cash_amount != null ? Number(row.cash_amount) : undefined,
-        onlineAmount: row.online_amount != null ? Number(row.online_amount) : undefined,
-        orderStatus: (row.order_status || "Received") as import("./types").OrderStatus,
+        paymentMethod: (row.payment_method || "Cash") as PaymentMethod,
+        orderStatus: (row.order_status || "Received") as OrderStatus,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       };
@@ -402,6 +493,48 @@ export async function fetchOrdersFromSupabase(): Promise<{
     return {
       success: false,
       error: err instanceof Error ? err.message : "Error fetching orders from Supabase",
+    };
+  }
+}
+
+/**
+ * Loads the complete billing store (garments, customers, and orders) from Supabase.
+ */
+export async function fetchBillingStoreFromSupabase(): Promise<{
+  success: boolean;
+  store?: BillingStoreData;
+  error?: string;
+}> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: "Supabase not configured" };
+  }
+
+  try {
+    const storeId = await getStoreId();
+    const [custRes, ordRes] = await Promise.all([
+      fetchCustomersFromSupabase(storeId),
+      fetchOrdersFromSupabase(storeId),
+    ]);
+
+    if (!custRes.success && custRes.error) {
+      return { success: false, error: custRes.error };
+    }
+    if (!ordRes.success && ordRes.error) {
+      return { success: false, error: ordRes.error };
+    }
+
+    return {
+      success: true,
+      store: {
+        garments: SAMPLE_GARMENTS,
+        customers: custRes.customers || [],
+        orders: ordRes.orders || [],
+      },
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Error loading data from Supabase",
     };
   }
 }

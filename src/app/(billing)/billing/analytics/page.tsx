@@ -20,6 +20,7 @@ import {
   Calendar,
   CheckCircle2,
   DollarSign,
+  Loader2,
   Package,
   RotateCcw,
   ShoppingBag,
@@ -30,7 +31,7 @@ import {
 type DateRangePreset = "today" | "7days" | "30days" | "thisMonth" | "custom";
 
 export default function AnalyticsDashboardPage() {
-  const { orders } = useBillingStore();
+  const { orders, isLoading, error, refreshFromSupabase } = useBillingStore();
 
   const [preset, setPreset] = useState<DateRangePreset>("30days");
   const [customStart, setCustomStart] = useState("");
@@ -233,6 +234,27 @@ export default function AnalyticsDashboardPage() {
           <RotateCcw className="size-3" /> Reset filters
         </button>
       </div>
+
+      {/* Loading & Error States */}
+      {isLoading ? (
+        <div className="flex items-center gap-2 rounded border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-800">
+          <Loader2 className="size-4 animate-spin text-sky-600" />
+          <span>Refreshing analytics from Supabase…</span>
+        </div>
+      ) : null}
+
+      {error ? (
+        <div className="flex items-center justify-between gap-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <span>⚠ {error}</span>
+          <button
+            type="button"
+            onClick={() => void refreshFromSupabase()}
+            className="shrink-0 rounded border border-red-300 bg-white px-2 py-1 text-xs font-bold hover:bg-red-50"
+          >
+            Retry
+          </button>
+        </div>
+      ) : null}
 
       {/* Date Range Selector & Dimension Filters */}
       <div className="rounded-lg border border-slate-200 bg-white p-3.5 shadow-2xs space-y-3">

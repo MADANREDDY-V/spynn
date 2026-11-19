@@ -22,11 +22,11 @@ import {
   type PaymentMethod,
   type PaymentStatus,
 } from "@/lib/billing/types";
-import { ArrowUpRight, FileSpreadsheet, RotateCcw, Tag, Trash2 } from "lucide-react";
+import { ArrowUpRight, FileSpreadsheet, Loader2, RotateCcw, Tag, Trash2 } from "lucide-react";
 
 function OrdersContent() {
   const searchParams = useSearchParams();
-  const { orders, updateOrderStatus, recordPayment, deleteOrder } = useBillingStore();
+  const { orders, isLoading, error, refreshFromSupabase, updateOrderStatus, recordPayment, deleteOrder } = useBillingStore();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [payFilter, setPayFilter] = useState<PaymentStatus | "all">("all");
@@ -220,6 +220,18 @@ function OrdersContent() {
           </div>
         </div>
 
+        {error && (
+          <div className="flex items-center justify-between rounded border border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-900">
+            <span>Failed to sync with Supabase: {error}</span>
+            <button
+              onClick={() => void refreshFromSupabase()}
+              className="font-bold underline hover:text-amber-950"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
         {/* Dynamic Summary KPI Cards matching Image 3 */}
         <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
           <div className="border border-slate-200 bg-white p-2.5 shadow-2xs">
@@ -334,7 +346,16 @@ function OrdersContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {rows.length === 0 ? (
+              {isLoading && rows.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="p-8 text-center text-slate-500">
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="size-4 animate-spin text-sky-600" />
+                      <span>Loading orders from Supabase...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="p-8 text-center text-slate-400">
                     No orders found matching the active filters.

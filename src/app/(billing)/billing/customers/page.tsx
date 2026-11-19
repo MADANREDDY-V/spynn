@@ -5,13 +5,13 @@ import { useMemo, useState } from "react";
 import { useBillingStore } from "@/components/billing/billing-store";
 import { money, orderTotals } from "@/lib/billing/calculations";
 import { billingBtnGhost, billingBtnPrimary, fieldClass } from "@/lib/billing/styles";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import type { Customer } from "@/lib/billing/types";
 
 const EMPTY = { name: "", mobile: "", address: "" };
 
 export default function CustomersPage() {
-  const { customers, orders, saveCustomer } = useBillingStore();
+  const { customers, orders, saveCustomer, isLoading, error, refreshFromSupabase } = useBillingStore();
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Customer | null>(null);
   const [draft, setDraft] = useState(EMPTY);
@@ -68,6 +68,18 @@ export default function CustomersPage() {
           placeholder="Search name, mobile, address"
           className={`${fieldClass()} mt-3`}
         />
+        {error ? (
+          <div className="mt-3 flex items-center justify-between gap-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            <span>⚠ {error}</span>
+            <button
+              type="button"
+              onClick={() => void refreshFromSupabase()}
+              className="shrink-0 rounded border border-red-300 bg-white px-2 py-1 text-xs font-bold hover:bg-red-50"
+            >
+              Retry
+            </button>
+          </div>
+        ) : null}
         <div className="mt-3 overflow-hidden border border-slate-200 bg-white shadow-2xs">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
@@ -80,7 +92,23 @@ export default function CustomersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {rows.map((customer) => {
+              {isLoading && rows.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-slate-500">
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="size-4 animate-spin text-sky-600" />
+                      <span className="text-xs">Loading customers from Supabase…</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : rows.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-xs text-slate-500">
+                    No customers found.
+                  </td>
+                </tr>
+              ) : (
+              rows.map((customer) => {
                 const customerOrders = orders.filter(
                   (order) => order.customerId === customer.id || order.customer.mobile === customer.mobile
                 );
@@ -119,7 +147,7 @@ export default function CustomersPage() {
                     </td>
                   </tr>
                 );
-              })}
+              }))}
             </tbody>
           </table>
         </div>
