@@ -6,16 +6,20 @@ import { useMemo, useState } from "react";
 import { useBillingStore } from "@/components/billing/billing-store";
 import { Receipt } from "@/components/billing/receipt";
 import { WhatsAppShare } from "@/components/billing/whatsapp-share";
+import { DeleteOrderModal } from "@/components/billing/delete-order-modal";
+import { ToastContainer, type ToastMessage } from "@/components/billing/toast-notification";
+import { getSessionUser } from "@/lib/billing/auth";
+import { buildCustomerOrdersWorkbook, downloadWorkbook } from "@/lib/billing/excel-export";
 import { money, orderTotals, serviceAbbreviation } from "@/lib/billing/calculations";
-import { billingBtnGhost, billingBtnPrimary, fieldClass } from "@/lib/billing/styles";
-import { ArrowLeft, Edit2, Plus, Printer, X } from "lucide-react";
+import { billingBtnDanger, billingBtnGhost, billingBtnPrimary, fieldClass } from "@/lib/billing/styles";
+import { ArrowLeft, Edit2, FileSpreadsheet, Loader2, Plus, Printer, Trash2, X } from "lucide-react";
 import type { Order } from "@/lib/billing/types";
 
 export default function CustomerDetailPage() {
   const params = useParams();
   const router = useRouter();
   const customerId = typeof params.id === "string" ? params.id : "";
-  const { customers, orders, saveCustomer } = useBillingStore();
+  const { customers, orders, saveCustomer, deleteOrder } = useBillingStore();
 
   const customer = customers.find((c) => c.id === customerId);
 
@@ -24,6 +28,62 @@ export default function CustomerDetailPage() {
   const [mobile, setMobile] = useState(customer?.mobile || "");
   const [address, setAddress] = useState(customer?.address || "");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  // Deletion, Export & Toast States
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  function addToast(type: "success" | "error" | "info", message: string) {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    setToasts((prev) => [...prev, { id, type, message }]);
+  }
+
+  function dismissToast(id: string) {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }
+
+  async function handleConfirmDelete(order: Order) {
+    const sessionUser = getSessionUser();
+    if (!sessionUser) {
+      addToast("error", "Unauthorized: please log in as a staff member to delete orders.");
+      return;
+    }
+
+    try {
+      const res = await deleteOrder(order.id);
+      if (res.success) {
+        if (selectedOrder?.id === order.id) {
+          setSelectedOrder(null);
+        }
+        setOrderToDelete(null);
+        addToast("success", `Order ${order.orderNumber} deleted successfully.`);
+      } else {
+        addToast("error", res.error || `Failed to delete order ${order.orderNumber}.`);
+      }
+    } catch (err) {
+      addToast("error", err instanceof Error ? err.message : "Error deleting order.");
+    }
+  }
+
+  async function handleExportExcel() {
+    if (!customer || customerOrders.length === 0) return;
+    setIsExporting(true);
+    try {
+      const sessionUser = getSessionUser();
+      const workbook = await buildCustomerOrdersWorkbook(customer, customerOrders, {
+        generatedBy: sessionUser?.name || "SPYNN Staff",
+      });
+      const safeName = customer.name.replace(/[^a-zA-Z0-9_-]/g, "_") || "Customer";
+      const filename = `SPYNN_${safeName}_Orders_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      await downloadWorkbook(workbook, filename);
+      addToast("success", `Exported ${customerOrders.length} order(s) for ${customer.name} to Excel.`);
+    } catch (err) {
+      addToast("error", err instanceof Error ? err.message : "Failed to export customer orders.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
 
   // Customer orders calculated directly from saved orders
   const customerOrders = useMemo(() => {
@@ -83,13 +143,29 @@ export default function CustomerDetailPage() {
         >
           <ArrowLeft className="size-4" /> Back to Customers
         </Link>
-        <button
-          type="button"
-          onClick={() => router.push(`/billing?customer=${customer.id}`)}
-          className={`${billingBtnPrimary} gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wide`}
-        >
-          <Plus className="size-4" /> New Order for This Customer
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            disabled={customerOrders.length === 0 || isExporting}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-bold uppercase tracking-wide text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={customerOrders.length === 0 ? "No orders to export" : "Export this customer's order history to Excel"}
+          >
+            {isExporting ? (
+              <Loader2 className="size-4 animate-spin text-emerald-600" />
+            ) : (
+              <FileSpreadsheet className="size-4 text-emerald-600" />
+            )}
+            Export Excel
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push(`/billing?customer=${customer.id}`)}
+            className={`${billingBtnPrimary} gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wide`}
+          >
+            <Plus className="size-4" /> New Order for This Customer
+          </button>
+        </div>
       </div>
 
       {/* Customer Header Card */}
@@ -279,13 +355,23 @@ export default function CustomerDetailPage() {
                         </span>
                       </td>
                       <td className="px-3 py-2.5 text-right whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedOrder(order)}
-                          className="rounded border border-slate-200 px-2 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-50"
-                        >
-                          View Details
-                        </button>
+                        <div className="inline-flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedOrder(order)}
+                            className="rounded border border-slate-200 px-2 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-50"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setOrderToDelete(order)}
+                            className="rounded border border-red-200 p-1 text-xs text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
+                            title={`Delete order ${order.orderNumber}`}
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -385,21 +471,30 @@ export default function CustomerDetailPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-slate-200 p-3 bg-slate-50">
+            <div className="flex items-center justify-between gap-2 border-t border-slate-200 p-3 bg-slate-50">
               <button
                 type="button"
-                onClick={() => window.print()}
-                className={`${billingBtnPrimary} gap-1.5 text-xs py-1.5`}
+                onClick={() => setOrderToDelete(selectedOrder)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
               >
-                <Printer className="size-3.5" /> Print Receipt
+                <Trash2 className="size-3.5" /> Delete Order
               </button>
-              <button
-                type="button"
-                onClick={() => setSelectedOrder(null)}
-                className={`${billingBtnGhost} text-xs py-1.5`}
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className={`${billingBtnPrimary} gap-1.5 text-xs py-1.5`}
+                >
+                  <Printer className="size-3.5" /> Print Receipt
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOrder(null)}
+                  className={`${billingBtnGhost} text-xs py-1.5`}
+                >
+                  Close
+                </button>
+              </div>
             </div>
 
             {/* Hidden Print Receipt */}
@@ -415,6 +510,19 @@ export default function CustomerDetailPage() {
           </div>
         </div>
       ) : null}
+
+      {/* Delete Confirmation Modal */}
+      {orderToDelete ? (
+        <DeleteOrderModal
+          order={orderToDelete}
+          isOpen={Boolean(orderToDelete)}
+          onClose={() => setOrderToDelete(null)}
+          onConfirmDelete={handleConfirmDelete}
+        />
+      ) : null}
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

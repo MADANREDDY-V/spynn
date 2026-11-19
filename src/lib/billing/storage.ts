@@ -70,6 +70,36 @@ export function emptyBillingStore(): BillingStoreData {
   return structuredClone(DEFAULT_STORE);
 }
 
+/**
+ * Returns true for orders that are confirmed test/demo data and must never
+ * be surfaced in the UI:
+ *  - o-1/SPYNN-0001 and o-2/SPYNN-0002: original predefined sample-data entries
+ *  - SPYNN-0003 through SPYNN-0006 with the -A/-B suffix variants: early-epoch
+ *    test orders entered during system setup (Oct 10–18 2026).
+ *    These have been deleted from Supabase; the filter here removes any stale
+ *    localStorage copies that may linger from before the cleanup.
+ */
+function isPredefinedSampleOrder(order: Order): boolean {
+  // Original hardcoded sample orders (matched by both id and number for safety)
+  if (order.id === "o-1" && order.orderNumber === "SPYNN-0001") return true;
+  if (order.id === "o-2" && order.orderNumber === "SPYNN-0002") return true;
+
+  // Early-epoch A/B-suffix test orders — match by order number only.
+  // These were deleted from Supabase during the Nov 2026 pre-launch cleanup.
+  const testOrderNumbers = new Set([
+    "SPYNN-0001-A", "SPYNN-0001-B",
+    "SPYNN-0002-A", "SPYNN-0002-B",
+    "SPYNN-0003-A", "SPYNN-0003-B",
+    "SPYNN-0003",   // legacy local-only copy before suffix was added
+    "SPYNN-0004-A", "SPYNN-0004-B",
+    "SPYNN-0004",   // legacy local-only copy
+    "SPYNN-0005-A", "SPYNN-0005-B",
+    "SPYNN-0005",   // legacy local-only copy
+    "SPYNN-0006-A", "SPYNN-0006-B",
+  ]);
+  return testOrderNumbers.has(order.orderNumber);
+}
+
 function parseStore(raw: string | null): BillingStoreData {
   if (!raw) return emptyBillingStore();
   try {
@@ -77,13 +107,16 @@ function parseStore(raw: string | null): BillingStoreData {
     const garments = Array.isArray(parsed.garments) ? parsed.garments.filter(isGarment) : [];
     const customers = Array.isArray(parsed.customers) ? parsed.customers.filter(isCustomer) : emptyBillingStore().customers;
     const orders = Array.isArray(parsed.orders)
-      ? parsed.orders.filter(isOrder).map((order) => ({
-          ...order,
-          items: order.items.map((line) => ({
-            ...line,
-            service: mapLegacyService(line.service as string),
-          })),
-        }))
+      ? parsed.orders
+          .filter(isOrder)
+          .filter((order) => !isPredefinedSampleOrder(order))
+          .map((order) => ({
+            ...order,
+            items: order.items.map((line) => ({
+              ...line,
+              service: mapLegacyService(line.service as string),
+            })),
+          }))
       : emptyBillingStore().orders;
 
     return {
@@ -124,7 +157,10 @@ export function loadBillingStore(): BillingStoreData {
           garments: emptyBillingStore().garments,
           customers: Array.isArray(legacy.customers) ? legacy.customers.filter(isCustomer) : emptyBillingStore().customers,
           orders: Array.isArray(legacy.orders)
-            ? legacy.orders.filter(isOrder).map((order: Order) => ({
+            ? legacy.orders
+                .filter(isOrder)
+                .filter((order: Order) => !isPredefinedSampleOrder(order))
+                .map((order: Order) => ({
                 ...order,
                 items: order.items.map((line) => ({
                   ...line,

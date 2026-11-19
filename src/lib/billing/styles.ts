@@ -6,6 +6,9 @@ export const billingInputClass =
 export const billingBtnPrimary =
   "inline-flex items-center justify-center rounded bg-green-700 px-3 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-40";
 
+export const billingBtnDanger =
+  "inline-flex items-center justify-center rounded bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-40";
+
 export const billingBtnGhost =
   "inline-flex items-center justify-center rounded border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40";
 

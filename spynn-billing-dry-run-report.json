@@ -1,0 +1,13 @@
+{
+  "mode": "DRY RUN — NO DATABASE WRITES",
+  "targetStore": "CHANDANAGAR",
+  "datasets": 2,
+  "customers": 35,
+  "orders": 40,
+  "orderItems": 166,
+  "garmentRecords": 436,
+  "servicePriceEntries": 2180,
+  "missingCustomerLinks": 2,
+  "duplicateOriginalOrderNumbers": 6,
+  "validationErrors": []
+}

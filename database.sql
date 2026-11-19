@@ -234,6 +234,10 @@ create policy "Admins and Agents can update billing order items." on billing_ord
   exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
 );
 
+-- Revoke direct table DELETE privileges from client roles (deletion is strictly RPC-only)
+revoke delete on table public.billing_orders from public, anon, authenticated;
+revoke delete on table public.billing_order_items from public, anon, authenticated;
+
 alter table public.billing_garment_prices enable row level security;
 create policy "Admins and Agents can view billing garment prices." on billing_garment_prices for select using (
   exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
@@ -241,3 +245,120 @@ create policy "Admins and Agents can view billing garment prices." on billing_ga
 create policy "Admins and Agents can insert/update billing garment prices." on billing_garment_prices for all using (
   exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
 );
+
+-- ----------------------------------------------------------------------------
+-- 5.5 Billing Audit Logs Table
+-- ----------------------------------------------------------------------------
+create table if not exists public.billing_audit_logs (
+  id uuid default uuid_generate_v4() primary key,
+  action text not null, -- 'DELETE_ORDER', 'CREATE_ORDER', etc.
+  entity_type text not null, -- 'order'
+  entity_id text not null, -- orderNumber or orderId
+  details jsonb,
+  performed_by text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create index if not exists idx_billing_audit_logs_action on public.billing_audit_logs (action);
+create index if not exists idx_billing_audit_logs_entity on public.billing_audit_logs (entity_type, entity_id);
+create index if not exists idx_billing_audit_logs_created_at on public.billing_audit_logs (created_at desc);
+
+alter table public.billing_audit_logs enable row level security;
+create policy "Admins and Agents can view billing audit logs." on billing_audit_logs for select using (
+  exists (select 1 from profiles where id = auth.uid() and role in ('admin', 'agent'))
+);
+
+-- Revoke direct writes from client roles (audit writes happen exclusively via delete_billing_order_by_number)
+revoke insert, update, delete on table public.billing_audit_logs from anon, authenticated;
+grant select on table public.billing_audit_logs to authenticated;
+
+-- ----------------------------------------------------------------------------
+-- 5.6 Secure Atomic Stored Procedure for Order Deletion
+-- ----------------------------------------------------------------------------
+create or replace function public.delete_billing_order_by_number(
+  p_order_number text,
+  p_performed_by text default null
+) returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_caller_uid    uuid;
+  v_caller_role   text;
+  v_caller_email  text;
+  v_audit_actor   text;
+
+  v_order_id      uuid;
+  v_customer_id   uuid;
+  v_order_total   numeric;
+  v_customer_name text;
+begin
+  -- 1. Authentication check
+  v_caller_uid := auth.uid();
+  if v_caller_uid is null then
+    return jsonb_build_object('success', false, 'error', 'Unauthenticated: you must be logged in to delete an order.');
+  end if;
+
+  -- 2. Role authorization check
+  select role, email into v_caller_role, v_caller_email
+  from public.profiles where id = v_caller_uid;
+
+  if not found then
+    return jsonb_build_object('success', false, 'error', 'Unauthorised: no staff profile found for the authenticated user.');
+  end if;
+
+  if v_caller_role not in ('admin', 'agent') then
+    return jsonb_build_object('success', false, 'error', format('Unauthorised: role "%s" does not have permission to delete orders.', v_caller_role));
+  end if;
+
+  -- Authoritative actor identity (verified email or UUID; p_performed_by is only a display hint)
+  v_audit_actor := coalesce(nullif(v_caller_email, ''), v_caller_uid::text);
+
+  -- 3. Validate order number
+  if p_order_number is null or trim(p_order_number) = '' then
+    return jsonb_build_object('success', false, 'error', 'Invalid request: order number must not be empty.');
+  end if;
+
+  -- 4. Locate order with row lock
+  select id, customer_id, total, customer_name
+  into v_order_id, v_customer_id, v_order_total, v_customer_name
+  from public.billing_orders
+  where order_number = trim(p_order_number)
+  for update;
+
+  if not found then
+    return jsonb_build_object('success', false, 'error', format('Order "%s" does not exist in the database.', p_order_number));
+  end if;
+
+  -- 5. Atomic deletion
+  delete from public.billing_order_items where order_id = v_order_id;
+  delete from public.billing_orders where id = v_order_id;
+
+  -- 6. Atomic audit logging
+  insert into public.billing_audit_logs (action, entity_type, entity_id, details, performed_by)
+  values (
+    'DELETE_ORDER',
+    'order',
+    p_order_number,
+    jsonb_build_object(
+      'order_id', v_order_id,
+      'customer_id', v_customer_id,
+      'customer_name', v_customer_name,
+      'total', v_order_total,
+      'auth_uid', v_caller_uid,
+      'caller_role', v_caller_role,
+      'display_name_hint', p_performed_by
+    ),
+    v_audit_actor
+  );
+
+  return jsonb_build_object('success', true, 'deleted_order_number', p_order_number);
+exception when others then
+  return jsonb_build_object('success', false, 'error', 'An internal error occurred while deleting the order. No data was changed.');
+end;
+$$;
+
+revoke execute on function public.delete_billing_order_by_number(text, text) from public;
+revoke execute on function public.delete_billing_order_by_number(text, text) from anon;
+grant execute on function public.delete_billing_order_by_number(text, text) to authenticated;

@@ -7,21 +7,26 @@ import { useBillingStore } from "@/components/billing/billing-store";
 import { Receipt } from "@/components/billing/receipt";
 import { WhatsAppShare } from "@/components/billing/whatsapp-share";
 import { GarmentTagsModal } from "@/components/billing/garment-tags";
+import { DeleteOrderModal } from "@/components/billing/delete-order-modal";
+import { ExportOrdersModal } from "@/components/billing/export-orders-modal";
+import { ToastContainer, type ToastMessage } from "@/components/billing/toast-notification";
+import { getSessionUser } from "@/lib/billing/auth";
 import { money, orderTotals, serviceAbbreviation } from "@/lib/billing/calculations";
 import { billingBtnGhost, billingBtnPrimary, fieldClass } from "@/lib/billing/styles";
 import {
   ORDER_STATUSES,
   PAYMENT_METHODS,
   PAYMENT_STATUSES,
+  type Order,
   type OrderStatus,
   type PaymentMethod,
   type PaymentStatus,
 } from "@/lib/billing/types";
-import { ArrowUpRight, RotateCcw, Tag } from "lucide-react";
+import { ArrowUpRight, FileSpreadsheet, RotateCcw, Tag, Trash2 } from "lucide-react";
 
 function OrdersContent() {
   const searchParams = useSearchParams();
-  const { orders, updateOrderStatus, recordPayment } = useBillingStore();
+  const { orders, updateOrderStatus, recordPayment, deleteOrder } = useBillingStore();
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "all">("all");
   const [payFilter, setPayFilter] = useState<PaymentStatus | "all">("all");
@@ -30,6 +35,43 @@ function OrdersContent() {
   const [endDate, setEndDate] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showTags, setShowTags] = useState(false);
+
+  // Deletion, Export & Notification States
+  const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
+
+  function addToast(type: "success" | "error" | "info", message: string) {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    setToasts((prev) => [...prev, { id, type, message }]);
+  }
+
+  function dismissToast(id: string) {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }
+
+  async function handleConfirmDelete(order: Order) {
+    const sessionUser = getSessionUser();
+    if (!sessionUser) {
+      addToast("error", "Unauthorized: please log in as a staff member to delete orders.");
+      return;
+    }
+
+    try {
+      const res = await deleteOrder(order.id);
+      if (res.success) {
+        if (selectedId === order.id) {
+          setSelectedId(null);
+        }
+        setOrderToDelete(null);
+        addToast("success", `Order ${order.orderNumber} deleted successfully.`);
+      } else {
+        addToast("error", res.error || `Failed to delete order ${order.orderNumber}.`);
+      }
+    } catch (err) {
+      addToast("error", err instanceof Error ? err.message : "Error deleting order.");
+    }
+  }
 
   useEffect(() => {
     const q = searchParams.get("q");
@@ -158,13 +200,24 @@ function OrdersContent() {
               Manage order lifecycles, record customer payments, and track balances.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900"
-          >
-            <RotateCcw className="size-3" /> Clear filters
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowExportModal(true)}
+              className="inline-flex items-center gap-1.5 rounded border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 shadow-2xs transition-colors"
+              title="Export orders to formatted Excel (.xlsx) spreadsheet"
+            >
+              <FileSpreadsheet className="size-3.5 text-emerald-700" />
+              <span>Export Excel</span>
+            </button>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900"
+            >
+              <RotateCcw className="size-3" /> Clear filters
+            </button>
+          </div>
         </div>
 
         {/* Dynamic Summary KPI Cards matching Image 3 */}
@@ -358,16 +411,30 @@ function OrdersContent() {
                         </span>
                       </td>
                       <td className="px-3 py-2.5 text-right whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedId(order.id);
-                          }}
-                          className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-50"
-                        >
-                          Open
-                        </button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedId(order.id);
+                            }}
+                            className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-sky-700 hover:bg-sky-50"
+                          >
+                            Open
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOrderToDelete(order);
+                            }}
+                            title="Delete order"
+                            aria-label={`Delete order ${order.orderNumber}`}
+                            className="rounded border border-red-200 bg-red-50/60 p-1 text-red-600 hover:bg-red-100 hover:text-red-700 transition-colors"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -581,6 +648,18 @@ function OrdersContent() {
                     discount={selected.discountPercent ?? totals.discountPercent}
                     amountPaid={selected.amountPaid}
                   />
+
+                  {/* Delete Order Button in Drawer */}
+                  <div className="pt-2 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => setOrderToDelete(selected)}
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded border border-red-200 bg-red-50/60 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 transition-colors"
+                    >
+                      <Trash2 className="size-3.5" />
+                      <span>Delete Order</span>
+                    </button>
+                  </div>
                 </div>
 
                 <Receipt
@@ -611,6 +690,28 @@ function OrdersContent() {
           </div>
         )}
       </aside>
+
+      {/* Delete Confirmation Modal */}
+      {orderToDelete && (
+        <DeleteOrderModal
+          order={orderToDelete}
+          isOpen={true}
+          onClose={() => setOrderToDelete(null)}
+          onConfirmDelete={handleConfirmDelete}
+        />
+      )}
+
+      {/* Excel Export Modal */}
+      <ExportOrdersModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        filteredOrders={rows}
+        allOrders={orders}
+        onNotify={addToast}
+      />
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

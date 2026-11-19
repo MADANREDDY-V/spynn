@@ -26,7 +26,6 @@ async function runTests() {
   // ─── Test 1: Short Order PDF Generation & Data Fidelity ───
   console.log("\n--- [Test 1] Short Order Receipt & PDF Validation ---");
   const shortCustomer: CustomerSnapshot = {
-    id: "cust-short",
     name: "Vikram Malhotra",
     mobile: "9876543210",
     address: "Flat 402, Rainbow Vistas, Hitec City, Hyderabad",
@@ -37,6 +36,7 @@ async function runTests() {
       id: "line-1",
       garmentId: "shirt",
       garmentName: "Shirt",
+      illustration: "shirt",
       service: "Dry Cleaning",
       quantity: 2,
       unitPrice: 100,
@@ -45,6 +45,7 @@ async function runTests() {
       id: "line-2",
       garmentId: "blazer",
       garmentName: "Blazer",
+      illustration: "blazer",
       variant: "Woolen Suit Jacket",
       service: "Dry Cleaning",
       quantity: 1,
@@ -54,6 +55,7 @@ async function runTests() {
       id: "line-3",
       garmentId: "wash-fold",
       garmentName: "Wash & Fold",
+      illustration: "wash-fold",
       service: "Laundry",
       quantity: 3.5,
       unit: "kg",
@@ -89,7 +91,6 @@ async function runTests() {
   // ─── Test 2: Long Order Multi-Page PDF & Pagination ───
   console.log("\n--- [Test 2] Long Order Multi-Page Receipt & PDF Validation ---");
   const longCustomer: CustomerSnapshot = {
-    id: "cust-long",
     name: "Pooja Hegde",
     mobile: "9123456789",
     address: "Plot 105, Road No. 12, Banjara Hills, Hyderabad",
@@ -101,6 +102,7 @@ async function runTests() {
       id: `line-${i}`,
       garmentId: `garment-${i}`,
       garmentName: `Designer Garment Item #${i}`,
+      illustration: "shirt",
       variant: i % 2 === 0 ? "Silk Zari Work" : undefined,
       service: i % 3 === 0 ? "Ironing" : i % 4 === 0 ? "Laundry" : "Dry Cleaning",
       quantity: (i % 3) + 1,
