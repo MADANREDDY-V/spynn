@@ -57,6 +57,62 @@ function writeUsersStore(store: UsersStore): void {
 }
 
 // ---------------------------------------------------------------------------
+// Error extraction helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Safely extracts a human-readable message from Supabase Auth errors,
+ * thrown exceptions, and unexpected responses.
+ * Specifically guards against @supabase/auth-js serializing 500 responses as "{}".
+ */
+export function extractAuthErrorMessage(
+  error: unknown,
+  fallbackMessage: string = "An unexpected authentication error occurred."
+): string {
+  if (!error) return fallbackMessage;
+
+  // Case 1: String error
+  if (typeof error === "string") {
+    const trimmed = error.trim();
+    if (!trimmed || trimmed === "{}" || trimmed === "null" || trimmed === "undefined") {
+      return fallbackMessage;
+    }
+    return trimmed;
+  }
+
+  // Case 2: Object error (AuthError, AuthApiError, AuthRetryableFetchError, Error, etc.)
+  if (typeof error === "object") {
+    const err = error as Record<string, unknown>;
+    const status = typeof err.status === "number" ? err.status : undefined;
+    const name = typeof err.name === "string" ? err.name.trim() : "";
+    const rawMsg = typeof err.message === "string" ? err.message.trim() : "";
+    const desc = typeof err.error_description === "string" ? err.error_description.trim() : "";
+    const code = typeof err.code === "string" ? err.code : undefined;
+
+    // Supabase Auth (GoTrue) returns status 500 when SMTP or email delivery fails.
+    // In @supabase/auth-js, 500 responses are treated as network errors and stringified
+    // from the fetch Response object, yielding "{}" as error.message.
+    if (status === 500 || rawMsg === "{}" || name === "AuthRetryableFetchError") {
+      return "Unable to send recovery email. The email service encountered an error (likely due to Supabase email rate limits or SMTP configuration). Please contact support or try again later.";
+    }
+
+    if (status === 429 || code === "over_email_send_rate_limit") {
+      return "Too many requests. Please wait a few minutes before trying again.";
+    }
+
+    if (rawMsg && rawMsg !== "{}" && rawMsg !== "null" && rawMsg !== "undefined") {
+      return rawMsg;
+    }
+
+    if (desc && desc !== "{}" && desc !== "null" && desc !== "undefined") {
+      return desc;
+    }
+  }
+
+  return fallbackMessage;
+}
+
+// ---------------------------------------------------------------------------
 // protoHash — NOT cryptographically secure
 // ---------------------------------------------------------------------------
 
@@ -121,7 +177,7 @@ export async function signupUser(
         },
       });
 
-      if (error) return error.message;
+      if (error) return extractAuthErrorMessage(error, "Error creating user account.");
 
       if (data.user) {
         const sessionUser: AuthUser = {
@@ -141,7 +197,7 @@ export async function signupUser(
       }
       return null;
     } catch (err) {
-      return err instanceof Error ? err.message : "Error creating Supabase user";
+      return extractAuthErrorMessage(err, "Error creating Supabase user");
     }
   }
 
@@ -190,7 +246,7 @@ export async function loginUser(email: string, password: string): Promise<string
         password,
       });
 
-      if (error) return error.message;
+      if (error) return extractAuthErrorMessage(error, "Error signing in.");
 
       if (data.user) {
         const name = (data.user.user_metadata?.full_name as string) || "Staff User";
@@ -213,7 +269,7 @@ export async function loginUser(email: string, password: string): Promise<string
       }
       return "Unable to log in to Supabase.";
     } catch (err) {
-      return err instanceof Error ? err.message : "Error connecting to Supabase Auth";
+      return extractAuthErrorMessage(err, "Error connecting to Supabase Auth");
     }
   }
 
@@ -307,27 +363,43 @@ export function subscribeAuthChange(listener: () => void): () => void {
 export async function requestPasswordReset(
   email: string
 ): Promise<string | null> {
-  if (!email.trim()) return "Email is required.";
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) return "Email is required.";
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(normalizedEmail)) {
+    return "Please enter a valid email address.";
+  }
 
   if (!isSupabaseConfigured()) {
     return "Supabase authentication is not configured.";
   }
 
   try {
-    const redirectTo = `${window.location.origin}/billing/update-password`;
+    const origin =
+      typeof window !== "undefined" && window.location.origin
+        ? window.location.origin
+        : "https://spynn.in";
+    const redirectTo = `${origin}/billing/update-password`;
 
     const { error } = await supabase.auth.resetPasswordForEmail(
-      email.trim().toLowerCase(),
+      normalizedEmail,
       { redirectTo }
     );
 
-    if (error) return error.message;
+    if (error) {
+      return extractAuthErrorMessage(
+        error,
+        "Failed to send password reset email. Please try again later."
+      );
+    }
 
     return null;
   } catch (err) {
-    return err instanceof Error
-      ? err.message
-      : "Unable to send password reset email.";
+    return extractAuthErrorMessage(
+      err,
+      "An unexpected error occurred while requesting password reset."
+    );
   }
 }
 
@@ -336,6 +408,10 @@ export async function updateUserPassword(
   newPassword: string
 ): Promise<string | null> {
   if (!newPassword) return "New password is required.";
+
+  if (newPassword.length < 8) {
+    return "Password must contain at least 8 characters.";
+  }
 
   if (!isSupabaseConfigured()) {
     return "Supabase authentication is not configured.";
@@ -346,13 +422,16 @@ export async function updateUserPassword(
       password: newPassword,
     });
 
-    if (error) return error.message;
+    if (error) {
+      return extractAuthErrorMessage(error, "Unable to update password.");
+    }
 
     return null;
   } catch (err) {
-    return err instanceof Error
-      ? err.message
-      : "Unable to update password.";
+    return extractAuthErrorMessage(
+      err,
+      "An unexpected error occurred while updating your password."
+    );
   }
 }
 
