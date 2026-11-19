@@ -188,10 +188,12 @@ export function BillingShell({ children }: { children: React.ReactNode }) {
   const [userName, setUserName] = useState("Staff User");
   const [userEmail, setUserEmail] = useState("staff@spynn.in");
 
-  // Auth pages should render without the shell
+  // Auth pages should render without the shell (no navbar, no AuthGuard)
   const isAuthPage =
     pathname === "/billing/login" ||
-    pathname === "/billing/signup";
+    pathname === "/billing/signup" ||
+    pathname === "/billing/forgot-password" ||
+    pathname === "/billing/update-password";
 
   useEffect(() => {
     function loadUser() {
