@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { loadBillingStore } from "./storage";
 import type {
   BillingStoreData,
   Customer,
@@ -17,6 +18,12 @@ import { SAMPLE_GARMENTS } from "./sample-data";
  * Verified production store UUID for SPYNN Chandanagar owned by vennapusamadankumarreddy@gmail.com
  */
 export const SPYNN_STORE_ID = "dd83fb7a-938e-44ce-9de5-fbb2fbb057c3";
+
+/**
+ * Minimum sequential floor.
+ * Orders up to 0082 exist in shop records; new orders continue from 0083+.
+ */
+export const MIN_ORDER_NUMBER_FLOOR = 82;
 
 let cachedStoreId: string | null = null;
 
@@ -47,11 +54,73 @@ export async function getStoreId(): Promise<string> {
 }
 
 /**
+ * Queries Supabase to determine the authoritative next unique sequential order number.
+ * Guarantees every new order continues past 0082 (minimum floor 82).
+ */
+export async function getNextOrderNumberFromSupabase(storeId?: string): Promise<string> {
+  const targetStoreId = storeId || (await getStoreId());
+  let maxNumber = MIN_ORDER_NUMBER_FLOOR;
+
+  if (isSupabaseConfigured()) {
+    try {
+      const [{ data: byNum }, { data: byDate }] = await Promise.all([
+        supabase
+          .from("billing_orders")
+          .select("order_number")
+          .eq("store_id", targetStoreId)
+          .order("order_number", { ascending: false })
+          .limit(50),
+        supabase
+          .from("billing_orders")
+          .select("order_number")
+          .eq("store_id", targetStoreId)
+          .order("created_at", { ascending: false })
+          .limit(50),
+      ]);
+
+      const allRows = [...(byNum || []), ...(byDate || [])];
+      for (const row of allRows) {
+        const match = /^SPYNN-(\d+)$/.exec(row.order_number);
+        if (match) {
+          const n = parseInt(match[1], 10);
+          if (Number.isFinite(n) && n > maxNumber) {
+            maxNumber = n;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to fetch highest order number from Supabase:", err);
+    }
+  }
+
+  // Also check local store orders in case any new orders exist in client state
+  try {
+    const current = loadBillingStore();
+    for (const o of current.orders) {
+      const match = /^SPYNN-(\d+)$/.exec(o.orderNumber);
+      if (match) {
+        const n = parseInt(match[1], 10);
+        if (Number.isFinite(n) && n > maxNumber) {
+          maxNumber = n;
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  return `SPYNN-${String(maxNumber + 1).padStart(4, "0")}`;
+}
+
+/**
  * Service for syncing SPYNN billing data with Supabase PostgreSQL database.
+ * Prevents duplicate saves: for new orders, uses explicit INSERT with unique order number
+ * collision detection and retry; for existing orders, updates by order_number.
  */
 export async function syncOrderToSupabase(
-  order: Order
-): Promise<{ success: boolean; error?: string }> {
+  order: Order,
+  isNewOrder = false
+): Promise<{ success: boolean; orderNumber?: string; error?: string }> {
   if (!isSupabaseConfigured()) {
     return {
       success: false,
@@ -90,46 +159,92 @@ export async function syncOrderToSupabase(
       }
     }
 
-    // 2. Upsert billing order matching production schema
-    const { data: orderData, error: orderErr } = await supabase
-      .from("billing_orders")
-      .upsert(
-        {
-          store_id: storeId,
-          order_number: order.orderNumber,
-          customer_id: customerId,
-          source_customer_snapshot: {
-            name: custName,
-            mobile: custMobile,
-            address: custAddress,
-          },
-          subtotal: totals.subtotal,
-          discount: totals.discountAmount,
-          discount_percent: totals.discountPercent,
-          tax_percent: order.taxPercent ?? 0,
-          total: totals.total,
-          amount_paid: totals.amountPaid,
-          balance: totals.balance,
-          payment_method: order.paymentMethod || "Cash",
-          order_status: order.orderStatus,
-          payment_status: totals.paymentStatus,
-          notes: order.notes || null,
-          created_at: order.createdAt,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "order_number" }
-      )
-      .select("id")
-      .single();
+    let effectiveOrderNumber = order.orderNumber;
+    let orderData: { id: string; order_number: string } | null = null;
 
-    if (orderErr) {
-      return { success: false, error: orderErr.message };
+    const orderPayload = {
+      store_id: storeId,
+      customer_id: customerId,
+      source_customer_snapshot: {
+        name: custName,
+        mobile: custMobile,
+        address: custAddress,
+      },
+      subtotal: totals.subtotal,
+      discount: totals.discountAmount,
+      discount_percent: totals.discountPercent,
+      tax_percent: order.taxPercent ?? 0,
+      total: totals.total,
+      amount_paid: totals.amountPaid,
+      balance: totals.balance,
+      payment_method: order.paymentMethod || "Cash",
+      order_status: order.orderStatus,
+      payment_status: totals.paymentStatus,
+      notes: order.notes || null,
+      created_at: order.createdAt,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (isNewOrder) {
+      // 2a. INSERT for new orders to prevent silent overwrite of existing records
+      let insertAttempts = 0;
+      let inserted = false;
+
+      while (!inserted && insertAttempts < 3) {
+        insertAttempts++;
+        const { data: insertedOrder, error: insErr } = await supabase
+          .from("billing_orders")
+          .insert({
+            ...orderPayload,
+            order_number: effectiveOrderNumber,
+          })
+          .select("id, order_number")
+          .single();
+
+        if (!insErr && insertedOrder) {
+          orderData = insertedOrder;
+          inserted = true;
+          break;
+        }
+
+        // If duplicate order number conflict (code 23505), allocate the next sequential number and retry
+        if (insErr && insErr.code === "23505") {
+          console.warn(`Order number ${effectiveOrderNumber} already taken, allocating next unique number...`);
+          effectiveOrderNumber = await getNextOrderNumberFromSupabase(storeId);
+          continue;
+        }
+
+        return { success: false, error: insErr?.message || "Failed to insert order" };
+      }
+
+      if (!inserted || !orderData) {
+        return { success: false, error: "Failed to allocate unique order number." };
+      }
+    } else {
+      // 2b. UPDATE for existing orders
+      const { data: updatedOrder, error: updErr } = await supabase
+        .from("billing_orders")
+        .update(orderPayload)
+        .eq("order_number", effectiveOrderNumber)
+        .select("id, order_number")
+        .single();
+
+      if (updErr) {
+        return { success: false, error: updErr.message };
+      }
+      orderData = updatedOrder;
     }
 
     // 3. Upsert order line items
     if (orderData?.id && order.items.length > 0) {
-      // Clear existing lines for this order
-      await supabase.from("billing_order_items").delete().eq("order_id", orderData.id);
+      if (!isNewOrder) {
+        try {
+          // Clear existing lines for this order (ignore if delete privilege is restricted by RLS)
+          await supabase.from("billing_order_items").delete().eq("order_id", orderData.id);
+        } catch {
+          // ignore
+        }
+      }
 
       const itemsToInsert = order.items.map((item) => ({
         store_id: storeId,
@@ -150,7 +265,7 @@ export async function syncOrderToSupabase(
       }
     }
 
-    return { success: true };
+    return { success: true, orderNumber: effectiveOrderNumber };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Network/Database error" };
   }

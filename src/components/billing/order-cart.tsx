@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Minus, MessageSquare, Plus, Tag, Trash2 } from "lucide-react";
+import { Loader2, Minus, MessageSquare, Plus, Tag, Trash2 } from "lucide-react";
 import { CustomerPicker } from "@/components/billing/customer-picker";
 import { GarmentTagsModal } from "@/components/billing/garment-tags";
 import { calcTotals, money, serviceAbbreviation } from "@/lib/billing/calculations";
@@ -28,6 +28,7 @@ export function OrderCart({
   onSave,
   onPrint,
   onReset,
+  isSaving = false,
 }: {
   customers: Customer[];
   customerId: string | null;
@@ -42,9 +43,10 @@ export function OrderCart({
   onUpdateLine: (id: string, patch: Partial<CartLine>) => void;
   onRemoveLine: (id: string) => void;
   onDiscount: (value: number) => void;
-  onSave: () => void;
+  onSave: () => void | Promise<void>;
   onPrint: () => void;
   onReset: () => void;
+  isSaving?: boolean;
   // Optional for backward compatibility
   notes?: string;
   amountPaid?: number;
@@ -316,11 +318,18 @@ export function OrderCart({
           <div className="space-y-1.5 pt-1">
             <button
               type="button"
-              disabled={!cart.length}
+              disabled={!cart.length || isSaving}
               onClick={onSave}
-              className={`${billingBtnPrimary} w-full py-2 text-xs font-bold uppercase tracking-wide shadow-xs`}
+              className={`${billingBtnPrimary} w-full py-2 text-xs font-bold uppercase tracking-wide shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              Save order
+              {isSaving ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  <span>Saving order…</span>
+                </>
+              ) : (
+                "Save order"
+              )}
             </button>
 
             {/* Row: Print Bill + Garment Tags */}

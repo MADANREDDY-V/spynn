@@ -12,6 +12,7 @@ import {
 import {
   deleteOrderFromSupabase,
   fetchBillingStoreFromSupabase,
+  getNextOrderNumberFromSupabase,
   syncCustomerToSupabase,
   syncGarmentPriceToSupabase,
   syncOrderStatusToSupabase,
@@ -33,7 +34,7 @@ type BillingContextValue = BillingStoreData & {
   upsertGarment: (garment: Garment) => void;
   addGarment: (input: Omit<Garment, "id">) => Garment;
   saveCustomer: (input: Omit<Customer, "id" | "createdAt"> & { id?: string }) => Customer;
-  saveOrder: (input: OrderInput) => Order;
+  saveOrder: (input: OrderInput) => Promise<{ success: boolean; order?: Order; error?: string }>;
   deleteOrder: (orderId: string) => Promise<{ success: boolean; error?: string }>;
   updateOrderStatus: (orderId: string, orderStatus: OrderStatus) => void;
   recordPayment: (
@@ -66,7 +67,17 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       const res = await fetchBillingStoreFromSupabase();
       if (res.success && res.store) {
-        saveBillingStore(res.store);
+        const local = loadBillingStore();
+        const remoteIds = new Set(res.store.orders.map((o) => o.id));
+        const remoteNums = new Set(res.store.orders.map((o) => o.orderNumber));
+        const localOnly = local.orders.filter(
+          (o) => !remoteIds.has(o.id) && !remoteNums.has(o.orderNumber)
+        );
+        const mergedStore: BillingStoreData = {
+          ...res.store,
+          orders: [...res.store.orders, ...localOnly],
+        };
+        saveBillingStore(mergedStore);
       } else if (res.error) {
         console.warn("Failed to load billing data from Supabase:", res.error);
         setError(res.error);
@@ -128,37 +139,62 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
     return customer;
   }, []);
 
-  const saveOrder = useCallback((input: OrderInput) => {
-    const now = new Date().toISOString();
-    const current = loadBillingStore();
-    const existing = input.id ? current.orders.find((item) => item.id === input.id) : undefined;
-    const order: Order = {
-      id: existing?.id ?? newId("o"),
-      orderNumber: existing?.orderNumber ?? nextOrderNumber(current.orders),
-      customerId: input.customerId,
-      customer: input.customer,
-      items: input.items,
-      notes: input.notes,
-      discount: input.discount,
-      discountPercent: input.discountPercent,
-      taxPercent: input.taxPercent ?? 0,
-      amountPaid: input.amountPaid,
-      paymentMethod: input.paymentMethod || "Cash",
-      cashAmount: input.cashAmount,
-      onlineAmount: input.onlineAmount,
-      orderStatus: input.orderStatus,
-      createdAt: existing?.createdAt ?? input.createdAt ?? now,
-      updatedAt: now,
-    };
-    writeStore((latest) => ({
-      ...latest,
-      orders: latest.orders.some((item) => item.id === order.id)
-        ? latest.orders.map((item) => (item.id === order.id ? order : item))
-        : [order, ...latest.orders],
-    }));
-    void syncOrderToSupabase(order);
-    return order;
-  }, []);
+  const saveOrder = useCallback(
+    async (input: OrderInput): Promise<{ success: boolean; order?: Order; error?: string }> => {
+      const now = new Date().toISOString();
+      const current = loadBillingStore();
+      const existing = input.id ? current.orders.find((item) => item.id === input.id) : undefined;
+      const isNew = !existing;
+
+      // Authoritative sequential order number:
+      // If updating, preserve the existing order number.
+      // If creating new, query Supabase for the next unique sequential number!
+      let assignedOrderNumber = existing?.orderNumber || input.orderNumber;
+      if (!assignedOrderNumber) {
+        assignedOrderNumber = await getNextOrderNumberFromSupabase();
+      }
+
+      const order: Order = {
+        id: existing?.id ?? newId("o"),
+        orderNumber: assignedOrderNumber,
+        customerId: input.customerId,
+        customer: input.customer,
+        items: input.items,
+        notes: input.notes,
+        discount: input.discount,
+        discountPercent: input.discountPercent,
+        taxPercent: input.taxPercent ?? 0,
+        amountPaid: input.amountPaid,
+        paymentMethod: input.paymentMethod || "Cash",
+        cashAmount: input.cashAmount,
+        onlineAmount: input.onlineAmount,
+        orderStatus: input.orderStatus,
+        createdAt: existing?.createdAt ?? input.createdAt ?? now,
+        updatedAt: now,
+      };
+
+      // 1. Sync to Supabase first with isNew flag to guarantee unique allocation
+      const syncRes = await syncOrderToSupabase(order, isNew);
+      if (!syncRes.success && isSupabaseConfigured()) {
+        return { success: false, error: syncRes.error || "Failed to save order to database." };
+      }
+
+      if (syncRes.orderNumber && syncRes.orderNumber !== order.orderNumber) {
+        order.orderNumber = syncRes.orderNumber;
+      }
+
+      // 2. Persist to local store
+      writeStore((latest) => ({
+        ...latest,
+        orders: latest.orders.some((item) => item.id === order.id)
+          ? latest.orders.map((item) => (item.id === order.id ? order : item))
+          : [order, ...latest.orders],
+      }));
+
+      return { success: true, order };
+    },
+    []
+  );
 
   const deleteOrder = useCallback(
     async (orderId: string): Promise<{ success: boolean; error?: string }> => {

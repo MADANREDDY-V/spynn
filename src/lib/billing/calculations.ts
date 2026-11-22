@@ -82,13 +82,14 @@ export function orderTotals(order: Order): OrderTotals {
   return calcTotals(order.items, pct, order.amountPaid);
 }
 
-export function nextOrderNumber(existing: Order[]): string {
+export function nextOrderNumber(existing: Order[], floor = 82): string {
   const max = existing.reduce((highest, order) => {
     const match = /^SPYNN-(\d+)$/.exec(order.orderNumber);
     const n = match ? Number(match[1]) : 0;
     return Number.isFinite(n) ? Math.max(highest, n) : highest;
   }, 0);
-  return `SPYNN-${String(max + 1).padStart(4, "0")}`;
+  const finalMax = Math.max(max, floor);
+  return `SPYNN-${String(finalMax + 1).padStart(4, "0")}`;
 }
 
 export function newId(prefix: string): string {

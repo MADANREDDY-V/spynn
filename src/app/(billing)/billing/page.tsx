@@ -48,6 +48,7 @@ function NewOrderScreen() {
   const [orderNumber, setOrderNumber] = useState("");
   const [createdAt, setCreatedAt] = useState(() => new Date().toISOString());
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const existingOrder = orderId
     ? orders.find((order) => order.id === orderId || order.orderNumber === orderId)
@@ -252,8 +253,8 @@ function NewOrderScreen() {
     setCustomer({ name: next.name, mobile: next.mobile, address: next.address });
   }
 
-  function handleSave() {
-    if (!cart.length) return;
+  async function handleSave() {
+    if (isSaving || !cart.length) return;
     let nextCustomerId = customerId;
     if (!nextCustomerId && customer.name.trim() && customer.mobile.trim()) {
       const savedCustomer = saveCustomer({
@@ -265,29 +266,42 @@ function NewOrderScreen() {
       setCustomerId(savedCustomer.id);
     }
 
-    const totals = calcTotals(cart, discount, amountPaid);
-    const saved = saveOrder({
-      id: editingId ?? undefined,
-      customerId: nextCustomerId,
-      customer: {
-        name: customer.name || "Walk-in Customer",
-        mobile: customer.mobile,
-        address: customer.address,
-      },
-      items: cart,
-      notes,
-      discount: totals.discountAmount,
-      discountPercent: discount,
-      amountPaid,
-      orderStatus: orders.find((order) => order.id === editingId)?.orderStatus ?? "Received",
-    });
+    setIsSaving(true);
+    try {
+      const totals = calcTotals(cart, discount, amountPaid);
+      const res = await saveOrder({
+        id: editingId ?? undefined,
+        customerId: nextCustomerId,
+        customer: {
+          name: customer.name || "Walk-in Customer",
+          mobile: customer.mobile,
+          address: customer.address,
+        },
+        items: cart,
+        notes,
+        discount: totals.discountAmount,
+        discountPercent: discount,
+        amountPaid,
+        orderStatus: orders.find((order) => order.id === editingId)?.orderStatus ?? "Received",
+      });
 
-    clearBillingDraft();
-    setEditingId(saved.id);
-    setOrderNumber(saved.orderNumber);
-    setCreatedAt(saved.createdAt);
-    setNotice(`Saved ${saved.orderNumber}.`);
-    router.replace(`/billing?order=${saved.id}`);
+      if (!res.success || !res.order) {
+        setNotice(`Failed to save order: ${res.error || "Please try again."}`);
+        return;
+      }
+
+      const saved = res.order;
+      clearBillingDraft();
+      setEditingId(saved.id);
+      setOrderNumber(saved.orderNumber);
+      setCreatedAt(saved.createdAt);
+      setNotice(`Saved ${saved.orderNumber}.`);
+      router.replace(`/billing?order=${saved.id}`);
+    } catch (err) {
+      setNotice(`Error: ${err instanceof Error ? err.message : "Failed to save order."}`);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -366,6 +380,7 @@ function NewOrderScreen() {
         onRemoveLine={(id) => setCart((current) => current.filter((line) => line.id !== id))}
         onDiscount={setDiscount}
         onSave={handleSave}
+        isSaving={isSaving}
         onPrint={() => {
           if (!cart.length) return;
           window.print();
