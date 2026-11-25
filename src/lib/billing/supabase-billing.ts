@@ -20,6 +20,14 @@ import { SAMPLE_GARMENTS } from "./sample-data";
 export const SPYNN_STORE_ID = "dd83fb7a-938e-44ce-9de5-fbb2fbb057c3";
 
 /**
+ * Checks if a value is a valid v4 UUID string.
+ */
+export function isValidUuid(val: unknown): val is string {
+  if (typeof val !== "string") return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val.trim());
+}
+
+/**
  * Minimum sequential floor.
  * Orders up to 0082 exist in shop records; new orders continue from 0083+.
  */
@@ -113,6 +121,91 @@ export async function getNextOrderNumberFromSupabase(storeId?: string): Promise<
 }
 
 /**
+ * Resolves an existing customer UUID by mobile or creates a new customer in Supabase.
+ * Guarantees a genuine UUID is returned and temporary frontend IDs never enter UUID columns.
+ */
+export async function resolveOrCreateCustomerInSupabase(
+  name: string,
+  mobile: string,
+  address?: string | null,
+  storeId?: string
+): Promise<{ success: boolean; customerId?: string; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: "Supabase not configured." };
+  }
+
+  const cleanMobile = (mobile || "").trim();
+  if (!cleanMobile) {
+    return { success: true, customerId: undefined };
+  }
+
+  const cleanName = (name || "").trim() || "Walk-in Customer";
+  const cleanAddress = address ? address.trim() : null;
+
+  try {
+    const targetStoreId = storeId || (await getStoreId());
+    const validStoreId = isValidUuid(targetStoreId) ? targetStoreId : SPYNN_STORE_ID;
+
+    // 1. Check if customer already exists for this store by mobile (order by created_at desc, limit 1)
+    const { data: existingRows, error: findErr } = await supabase
+      .from("billing_customers")
+      .select("id, full_name, address")
+      .eq("store_id", validStoreId)
+      .eq("mobile", cleanMobile)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (findErr) {
+      console.warn("Error finding customer by mobile:", findErr.message);
+    }
+
+    const existing = existingRows?.[0];
+    if (existing?.id && isValidUuid(existing.id)) {
+      // Update details if changed
+      if ((cleanName && cleanName !== existing.full_name) || (cleanAddress && cleanAddress !== existing.address)) {
+        await supabase
+          .from("billing_customers")
+          .update({
+            full_name: cleanName || existing.full_name,
+            address: cleanAddress || existing.address,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existing.id);
+      }
+      return { success: true, customerId: existing.id };
+    }
+
+    // 2. Customer not found: insert a new customer
+    const { data: created, error: insErr } = await supabase
+      .from("billing_customers")
+      .insert({
+        store_id: validStoreId,
+        full_name: cleanName,
+        mobile: cleanMobile,
+        address: cleanAddress,
+        updated_at: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+
+    if (insErr) {
+      return { success: false, error: insErr.message };
+    }
+
+    if (created?.id && isValidUuid(created.id)) {
+      return { success: true, customerId: created.id };
+    }
+
+    return { success: false, error: "Created customer without valid UUID." };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Error resolving customer in Supabase",
+    };
+  }
+}
+
+/**
  * Service for syncing SPYNN billing data with Supabase PostgreSQL database.
  * Prevents duplicate saves: for new orders, uses explicit INSERT with unique order number
  * collision detection and retry; for existing orders, updates by order_number.
@@ -120,7 +213,7 @@ export async function getNextOrderNumberFromSupabase(storeId?: string): Promise<
 export async function syncOrderToSupabase(
   order: Order,
   isNewOrder = false
-): Promise<{ success: boolean; orderNumber?: string; error?: string }> {
+): Promise<{ success: boolean; orderNumber?: string; customerId?: string; error?: string }> {
   if (!isSupabaseConfigured()) {
     return {
       success: false,
@@ -129,42 +222,32 @@ export async function syncOrderToSupabase(
   }
 
   try {
-    const storeId = await getStoreId();
+    const rawStoreId = await getStoreId();
+    const storeId = isValidUuid(rawStoreId) ? rawStoreId : SPYNN_STORE_ID;
     const totals = orderTotals(order);
 
-    // 1. Upsert customer snapshot into billing_customers
-    let customerId = order.customerId;
+    // 1. Resolve or create customer in Supabase to obtain authoritative UUID
+    let resolvedCustomerId: string | null = isValidUuid(order.customerId) ? order.customerId : null;
     const custMobile = order.customer?.mobile ? order.customer.mobile.trim() : "";
     const custName = order.customer?.name ? order.customer.name.trim() : "Walk-in Customer";
     const custAddress = order.customer?.address ? order.customer.address.trim() : null;
 
     if (custMobile) {
-      const { data: custData, error: custErr } = await supabase
-        .from("billing_customers")
-        .upsert(
-          {
-            store_id: storeId,
-            full_name: custName,
-            mobile: custMobile,
-            address: custAddress,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "mobile" }
-        )
-        .select("id")
-        .single();
-
-      if (!custErr && custData) {
-        customerId = custData.id;
+      const custRes = await resolveOrCreateCustomerInSupabase(custName, custMobile, custAddress, storeId);
+      if (custRes.success && custRes.customerId && isValidUuid(custRes.customerId)) {
+        resolvedCustomerId = custRes.customerId;
       }
     }
+
+    // Strict validation: NEVER pass non-UUID strings to customer_id
+    const finalCustomerId = isValidUuid(resolvedCustomerId) ? resolvedCustomerId : null;
 
     let effectiveOrderNumber = order.orderNumber;
     let orderData: { id: string; order_number: string } | null = null;
 
     const orderPayload = {
       store_id: storeId,
-      customer_id: customerId,
+      customer_id: finalCustomerId,
       source_customer_snapshot: {
         name: custName,
         mobile: custMobile,
@@ -236,7 +319,7 @@ export async function syncOrderToSupabase(
     }
 
     // 3. Upsert order line items
-    if (orderData?.id && order.items.length > 0) {
+    if (orderData?.id && isValidUuid(orderData.id) && order.items.length > 0) {
       if (!isNewOrder) {
         try {
           // Clear existing lines for this order (ignore if delete privilege is restricted by RLS)
@@ -265,7 +348,11 @@ export async function syncOrderToSupabase(
       }
     }
 
-    return { success: true, orderNumber: effectiveOrderNumber };
+    return {
+      success: true,
+      orderNumber: effectiveOrderNumber,
+      customerId: finalCustomerId || undefined,
+    };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Network/Database error" };
   }
@@ -273,26 +360,21 @@ export async function syncOrderToSupabase(
 
 export async function syncCustomerToSupabase(
   customer: Customer
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; customerId?: string; error?: string }> {
   if (!isSupabaseConfigured()) {
     return { success: false, error: "Supabase not configured." };
   }
 
   try {
     const storeId = await getStoreId();
-    const { error } = await supabase.from("billing_customers").upsert(
-      {
-        store_id: storeId,
-        full_name: customer.name,
-        mobile: customer.mobile,
-        address: customer.address || null,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "mobile" }
+    const res = await resolveOrCreateCustomerInSupabase(
+      customer.name,
+      customer.mobile,
+      customer.address,
+      storeId
     );
-
-    if (error) return { success: false, error: error.message };
-    return { success: true };
+    if (!res.success) return { success: false, error: res.error };
+    return { success: true, customerId: res.customerId };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : "Error saving customer" };
   }

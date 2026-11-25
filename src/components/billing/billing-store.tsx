@@ -13,6 +13,7 @@ import {
   deleteOrderFromSupabase,
   fetchBillingStoreFromSupabase,
   getNextOrderNumberFromSupabase,
+  isValidUuid,
   syncCustomerToSupabase,
   syncGarmentPriceToSupabase,
   syncOrderStatusToSupabase,
@@ -119,9 +120,18 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveCustomer = useCallback((input: Omit<Customer, "id" | "createdAt"> & { id?: string }) => {
-    const id = input.id ?? newId("c");
     const current = loadBillingStore();
-    const previous = current.customers.find((item) => item.id === id);
+    const cleanMobile = input.mobile.trim();
+    // Prefer existing genuine UUID if customer with same mobile already exists
+    const previous = current.customers.find(
+      (item) => (input.id && item.id === input.id) || (cleanMobile && item.mobile === cleanMobile)
+    );
+    const id = isValidUuid(input.id)
+      ? input.id
+      : previous && isValidUuid(previous.id)
+      ? previous.id
+      : input.id ?? newId("c");
+
     const customer: Customer = {
       id,
       name: input.name,
@@ -135,7 +145,22 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
         ? latest.customers.map((item) => (item.id === id ? customer : item))
         : [...latest.customers, customer],
     }));
-    void syncCustomerToSupabase(customer);
+
+    void syncCustomerToSupabase(customer).then((res) => {
+      if (res.success && res.customerId && res.customerId !== id) {
+        // Upgrade local temporary ID to the confirmed Supabase UUID
+        writeStore((latest) => ({
+          ...latest,
+          customers: latest.customers.map((c) =>
+            c.id === id || (cleanMobile && c.mobile === cleanMobile) ? { ...c, id: res.customerId! } : c
+          ),
+          orders: latest.orders.map((o) =>
+            o.customerId === id ? { ...o, customerId: res.customerId! } : o
+          ),
+        }));
+      }
+    });
+
     return customer;
   }, []);
 
@@ -154,10 +179,19 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
         assignedOrderNumber = await getNextOrderNumberFromSupabase();
       }
 
+      // Check if input customerId is a temporary frontend ID; resolve to existing customer UUID if known
+      let effectiveCustomerId: string | null = isValidUuid(input.customerId) ? input.customerId : null;
+      if (!effectiveCustomerId && input.customer?.mobile) {
+        const matched = current.customers.find(
+          (c) => c.mobile === input.customer.mobile && isValidUuid(c.id)
+        );
+        if (matched) effectiveCustomerId = matched.id;
+      }
+
       const order: Order = {
         id: existing?.id ?? newId("o"),
         orderNumber: assignedOrderNumber,
-        customerId: input.customerId,
+        customerId: effectiveCustomerId,
         customer: input.customer,
         items: input.items,
         notes: input.notes,
@@ -173,7 +207,7 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
         updatedAt: now,
       };
 
-      // 1. Sync to Supabase first with isNew flag to guarantee unique allocation
+      // 1. Sync to Supabase first with isNew flag to guarantee unique allocation & customer resolution
       const syncRes = await syncOrderToSupabase(order, isNew);
       if (!syncRes.success && isSupabaseConfigured()) {
         return { success: false, error: syncRes.error || "Failed to save order to database." };
@@ -182,6 +216,9 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
       if (syncRes.orderNumber && syncRes.orderNumber !== order.orderNumber) {
         order.orderNumber = syncRes.orderNumber;
       }
+      if (syncRes.customerId && syncRes.customerId !== order.customerId) {
+        order.customerId = syncRes.customerId || null;
+      }
 
       // 2. Persist to local store
       writeStore((latest) => ({
@@ -189,6 +226,14 @@ export function BillingProvider({ children }: { children: React.ReactNode }) {
         orders: latest.orders.some((item) => item.id === order.id)
           ? latest.orders.map((item) => (item.id === order.id ? order : item))
           : [order, ...latest.orders],
+        // Upgrade any matching customer records with the authoritative UUID
+        customers: syncRes.customerId
+          ? latest.customers.map((c) =>
+              c.id === input.customerId || (order.customer.mobile && c.mobile === order.customer.mobile)
+                ? { ...c, id: syncRes.customerId! }
+                : c
+            )
+          : latest.customers,
       }));
 
       return { success: true, order };

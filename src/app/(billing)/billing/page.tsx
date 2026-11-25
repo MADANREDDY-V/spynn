@@ -7,6 +7,7 @@ import { OrderCart } from "@/components/billing/order-cart";
 import { Receipt } from "@/components/billing/receipt";
 import { useBillingStore } from "@/components/billing/billing-store";
 import { calcTotals, newId } from "@/lib/billing/calculations";
+import { isValidUuid } from "@/lib/billing/supabase-billing";
 import { clearBillingDraft, loadBillingDraft, saveBillingDraft } from "@/lib/billing/storage";
 import { fieldClass } from "@/lib/billing/styles";
 import {
@@ -256,6 +257,18 @@ function NewOrderScreen() {
   async function handleSave() {
     if (isSaving || !cart.length) return;
     let nextCustomerId = customerId;
+
+    // Check if customer mobile matches an already known customer with genuine UUID
+    if (customer.mobile.trim()) {
+      const matched = customers.find(
+        (c) => c.mobile.trim() === customer.mobile.trim() && isValidUuid(c.id)
+      );
+      if (matched) {
+        nextCustomerId = matched.id;
+        setCustomerId(matched.id);
+      }
+    }
+
     if (!nextCustomerId && customer.name.trim() && customer.mobile.trim()) {
       const savedCustomer = saveCustomer({
         name: customer.name.trim(),
@@ -294,6 +307,9 @@ function NewOrderScreen() {
       clearBillingDraft();
       setEditingId(saved.id);
       setOrderNumber(saved.orderNumber);
+      if (saved.customerId) {
+        setCustomerId(saved.customerId);
+      }
       setCreatedAt(saved.createdAt);
       setNotice(`Saved ${saved.orderNumber}.`);
       router.replace(`/billing?order=${saved.id}`);
